@@ -14,10 +14,10 @@ import Animated, {
   useAnimatedScrollHandler,
   useAnimatedStyle,
   useSharedValue,
-  withTiming,
+  withSpring,
 } from 'react-native-reanimated';
 
-import { FnNull, PullingRefreshStatus } from './constants';
+import { FnNull, iOSpringConfig, PullingRefreshStatus } from './constants';
 import { MrPullRefreshContext } from './context';
 import { PullupLoading } from './DefaultLoading';
 import { HeroLottie } from './LottieLoading';
@@ -67,11 +67,15 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
 
     runOnUI(() => {
       pulldownState.value = PullingRefreshStatus.BACKUP;
-      panTranslateY.value = withTiming(0, undefined, (finished?: boolean) => {
-        if (finished) {
-          pulldownState.value = PullingRefreshStatus.IDLE;
+      panTranslateY.value = withSpring(
+        0,
+        iOSpringConfig,
+        (finished?: boolean) => {
+          if (finished) {
+            pulldownState.value = PullingRefreshStatus.IDLE;
+          }
         }
-      });
+      );
     })();
   };
 
@@ -84,11 +88,15 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
 
     runOnUI(() => {
       pullupState.value = PullingRefreshStatus.BACKUP;
-      panTranslateY.value = withTiming(0, undefined, (finished?: boolean) => {
-        if (finished) {
-          pullupState.value = PullingRefreshStatus.IDLE;
+      panTranslateY.value = withSpring(
+        0,
+        iOSpringConfig,
+        (finished?: boolean) => {
+          if (finished) {
+            pullupState.value = PullingRefreshStatus.IDLE;
+          }
         }
-      });
+      );
     })();
   };
 
@@ -166,7 +174,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
 
         // console.log(refreshState.current,moveY.value,refreshHeight)
         if (pulldownState.value === PullingRefreshStatus.BACKUP) {
-          panTranslateY.value = withTiming(0, undefined, finished => {
+          panTranslateY.value = withSpring(0, iOSpringConfig, finished => {
             if (finished) {
               pulldownState.value = PullingRefreshStatus.IDLE;
             }
@@ -174,9 +182,9 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
         }
 
         if (pulldownState.value === PullingRefreshStatus.PULLINGBACK) {
-          panTranslateY.value = withTiming(
+          panTranslateY.value = withSpring(
             pulldownHeight,
-            undefined,
+            iOSpringConfig,
             finished => {
               if (finished) {
                 pulldownState.value = PullingRefreshStatus.LOADING;
@@ -195,7 +203,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
 
         // console.log(refreshState.current,moveY.value,refreshHeight)
         if (pullupState.value === PullingRefreshStatus.BACKUP) {
-          panTranslateY.value = withTiming(0, undefined, finished => {
+          panTranslateY.value = withSpring(0, iOSpringConfig, finished => {
             if (finished) {
               pullupState.value = PullingRefreshStatus.IDLE;
             }
@@ -203,9 +211,9 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
         }
 
         if (pullupState.value === PullingRefreshStatus.PULLINGBACK) {
-          panTranslateY.value = withTiming(
+          panTranslateY.value = withSpring(
             -pullupHeight,
-            undefined,
+            iOSpringConfig,
             finished => {
               if (finished) {
                 pullupState.value = PullingRefreshStatus.LOADING;

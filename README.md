@@ -56,8 +56,6 @@ import { MrPullRefresh } from 'react-native-mr-pullrefresh';
 | onPulldownRefresh |             |
 | onPullupRefresh   |             |
 
-## Note
-`react-native-mr-pullrefresh` Only support wrapper `Animated.ScrollView` and `Animated.FlatList`
 
 ## Contributing
 

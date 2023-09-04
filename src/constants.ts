@@ -9,6 +9,13 @@ export enum PullingRefreshStatus {
   BACKUP,
 }
 
+export const iOSpringConfig = {
+  velocity: 8,
+  mass: 1,
+  damping: 15,
+  stiffness: 100,
+};
+
 export const FnNull = () => {
   /*  */
 };

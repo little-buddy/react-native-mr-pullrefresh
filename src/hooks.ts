@@ -41,7 +41,7 @@ export const usePulldownLoadingAnimation = () => {
 
   const { pulldownHeight, panTranslateY } = ctx;
 
-  const x = useAnimatedStyle(() => ({
+  return useAnimatedStyle(() => ({
     height: pulldownHeight,
     opacity: interpolate(panTranslateY.value, [0, pulldownHeight], [0, 1]),
     transform: [
@@ -55,8 +55,6 @@ export const usePulldownLoadingAnimation = () => {
       },
     ],
   }));
-
-  return x;
 };
 
 export const useOnPullupState = (
