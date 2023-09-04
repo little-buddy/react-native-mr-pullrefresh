@@ -1,6 +1,11 @@
-# react-native-mr-refresh
+# react-native-mr-pullrefresh
 
 react-native pull refresh on iOS, Android and Web
+
+## ⚠️ Warning
+`react-native-mr-pullrefresh` Only support wrapper `Animated.ScrollView` and `Animated.FlatList`
+
+not support nested MrPullRefresh!
 
 <!-- ## Installation
 
