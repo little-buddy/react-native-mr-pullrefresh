@@ -23,11 +23,15 @@ export const useOnPulldownState = (
 ) => {
   const ctx = useMrPullRefreshValue();
 
+  // FIXME: Why always re-render
   useAnimatedReaction(
     () => ctx.pulldownState.value,
-    current => {
-      runOnJS(onChange)(current);
-    }
+    (current, prev) => {
+      if (current !== prev) {
+        runOnJS(onChange)(current);
+      }
+    },
+    []
   );
 };
 
@@ -60,8 +64,10 @@ export const useOnPullupState = (
 
   useAnimatedReaction(
     () => ctx.pullupState.value,
-    current => {
-      runOnJS(onChange)(current);
+    (current, prev) => {
+      if (current !== prev) {
+        runOnJS(onChange)(current);
+      }
     }
   );
 };

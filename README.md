@@ -10,13 +10,19 @@ npm install react-native-mr-pullrefresh
 
 ## Usage
 
-<!-- ```js
-import { multiply } from 'react-native-mr-refresh';
+```js
+import { MrPullRefresh } from 'react-native-mr-pullrefresh';
 
 // ...
 
-const result = await multiply(3, 7);
-``` -->
+ <MrPullRefresh
+  onPulldownRefresh={downLoader}
+  onPullupRefresh={upLoader}
+  style={{ flex: 1 }}
+>
+ {/* children */}
+</MrPullRefresh>
+```
 
 ## Example on iOS
 <img src="./gifs/ddd.gif" alt="ios-example" width="240">

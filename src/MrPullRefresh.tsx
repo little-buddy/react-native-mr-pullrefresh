@@ -1,5 +1,9 @@
-import React, { memo, type PropsWithChildren } from 'react';
-import type { NativeScrollEvent, ViewStyle } from 'react-native';
+import React, { memo, type PropsWithChildren, useCallback } from 'react';
+import type {
+  LayoutChangeEvent,
+  NativeScrollEvent,
+  ViewStyle,
+} from 'react-native';
 import { StyleSheet, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { type HitSlop } from 'react-native-gesture-handler/lib/typescript/handlers/gestureHandlerCommon';
@@ -17,15 +21,16 @@ import Animated, {
 import { FnNull, PullingRefreshStatus } from './constants';
 import { MrPullRefreshContext } from './context';
 import { PulldownLoading, PullupLoading } from './DefaultLoading';
+import { HeroLottie } from './LottieLoading';
 import { getWindowHeight, isPromise } from './utils';
 interface MrRefreshWrapperProps {
   onPulldownRefresh?: () => void | Promise<unknown>;
   onPullupRefresh?: () => void | Promise<unknown>;
   pulldownHeight?: number;
   pullupHeight?: number;
-  pulldownLoading: JSX.Element;
-  pullupLoading: JSX.Element;
-  bounces?: Blob;
+  pulldownLoading?: JSX.Element;
+  pullupLoading?: JSX.Element;
+  enablePullup?: boolean;
   hitSlop?: HitSlop;
   style?: ViewStyle;
   scroller?: JSX.Element;
@@ -36,15 +41,11 @@ interface MrRefreshWrapperProps {
 const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
   onPulldownRefresh = FnNull,
   onPullupRefresh = FnNull,
-  pulldownHeight = 100,
+  pulldownHeight = 140,
   pullupHeight = 100,
   pulldownLoading = <PulldownLoading />,
   pullupLoading = <PullupLoading />,
-
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  bounces = false,
+  enablePullup = true,
   hitSlop,
   style,
   scroller = Animated.ScrollView,
@@ -131,7 +132,6 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
 
       console.log(scrollerOffsetY.value, contentY.value - containerY.value);
 
-      // TODO: 不需要判断元素见底，因为元素见底，触摸状态就会交给上一层级
       // TODO: 而且你会发现它这里其实是有修正偏差的
       if (
         ([
@@ -249,6 +249,19 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
     }
   });
 
+  const onLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      containerY.value = event.nativeEvent.layout.height;
+    },
+    [containerY]
+  );
+
+  const onContentSizeChange = useCallback(
+    (_width: number, height: number) => {
+      contentY.value = height;
+    },
+    [contentY]
+  );
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const Scroller: any = scroller;
 
@@ -266,28 +279,27 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
       }}
     >
       <View style={[styles.flex, style]}>
-        {pulldownLoading}
+        {/* {pulldownLoading} */}
+
+        <HeroLottie />
+
         <GestureDetector gesture={panGesture}>
           <Animated.View
-            onLayout={event => {
-              containerY.value = event.nativeEvent.layout.height;
-            }}
-            style={[styles.flex, contentAnimation]}
+            onLayout={onLayout}
+            style={[styles.flex, styles.zTop, contentAnimation]}
           >
             <GestureDetector gesture={Gesture.Simultaneous(panGesture, native)}>
               <Scroller
                 {...scrollProps}
                 onScroll={onScroll}
-                onContentSizeChange={(width: number, height: number) => {
-                  contentY.value = height;
-                }}
+                onContentSizeChange={onContentSizeChange}
               >
                 {children}
               </Scroller>
             </GestureDetector>
           </Animated.View>
         </GestureDetector>
-        {pullupLoading}
+        {enablePullup && pullupLoading}
       </View>
     </MrPullRefreshContext.Provider>
   );
@@ -296,6 +308,9 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
 const styles = StyleSheet.create({
   flex: {
     flex: 1,
+  },
+  zTop: {
+    zIndex: 2,
   },
   loaderContainer: {
     position: 'absolute',

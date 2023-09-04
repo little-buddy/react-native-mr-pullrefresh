@@ -7,12 +7,12 @@ export default function App() {
   const [data, setData] = React.useState<number[]>([]);
 
   const downLoader = async () => {
-    await delayTime(800);
+    await delayTime(5000);
     setData(Array(400).fill(0));
   };
 
   const upLoader = async () => {
-    await delayTime(800);
+    await delayTime(5000);
     setData(Array(300).fill(0));
   };
   // React.useEffect(() => {
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#ff8080',
+    // backgroundColor: '#ff8080',
     overflow: 'hidden',
   },
   box: {
