@@ -1,5 +1,5 @@
 {
-  "name": "react-native-mr-refresh",
+  "name": "react-native-mr-pullrefresh",
   "version": "1.0.0",
   "description": "react-native pull refresh on iOS, Android and Web",
   "main": "lib/commonjs/index",
@@ -41,13 +41,13 @@
     "android",
     "pull refresh"
   ],
-  "repository": "https://github.com/little-buddy/react-native-mr-refresh.git",
+  "repository": "https://github.com/little-buddy/react-native-mr-pullrefresh.git",
   "author": "buddy <litoubuddy@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/little-buddy/react-native-mr-refresh/issues"
+    "url": "https://github.com/little-buddy/react-native-mr-pullrefresh/issues"
   },
-  "homepage": "https://github.com/little-buddy/react-native-mr-refresh.git#readme",
+  "homepage": "https://github.com/little-buddy/react-native-mr-pullrefresh.git#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },

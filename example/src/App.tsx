@@ -1,18 +1,18 @@
 import * as React from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { delayTime, MrRefresh } from 'react-native-mr-refresh';
+import { delayTime, MrRefresh } from 'react-native-mr-pullrefresh';
 
 export default function App() {
   const [data, setData] = React.useState<number[]>([]);
 
   const downLoader = async () => {
-    await delayTime(3000);
+    await delayTime(800);
     setData(Array(400).fill(0));
   };
 
   const upLoader = async () => {
-    await delayTime(3000);
+    await delayTime(800);
     setData(Array(300).fill(0));
   };
   // React.useEffect(() => {

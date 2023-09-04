@@ -37,7 +37,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
   pulldownHeight = 100,
   pullupHeight = 100,
   children = null,
-  Loader = <DefaultLoader />,
+  Loader = DefaultLoader,
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -110,14 +110,20 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
       }
     })
     .onChange(event => {
-      console.log(pullupState.value, pulldownState.value);
+      // TODO: 回拉的时候还需要判断处理
 
       if (event.translationY >= 0) {
         pullupState.value = PullingRefreshStatus.IDLE;
-        pulldownState.value = PullingRefreshStatus.PULLING;
+        pulldownState.value =
+          event.translationY > pulldownHeight
+            ? PullingRefreshStatus.PULLINGGO
+            : PullingRefreshStatus.PULLING;
       } else {
         pulldownState.value = PullingRefreshStatus.IDLE;
-        pullupState.value = PullingRefreshStatus.PULLING;
+        pullupState.value =
+          -event.translationY > pullupHeight
+            ? PullingRefreshStatus.PULLINGGO
+            : PullingRefreshStatus.PULLING;
       }
 
       console.log(scrollerOffsetY.value, contentY.value - containerY.value);
@@ -125,9 +131,15 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
       // TODO: 不需要判断元素见底，因为元素见底，触摸状态就会交给上一层级
       // TODO: 而且你会发现它这里其实是有修正偏差的
       if (
-        (pulldownState.value === PullingRefreshStatus.PULLING &&
+        ([
+          PullingRefreshStatus.PULLING,
+          PullingRefreshStatus.PULLINGGO,
+        ].includes(pulldownState.value) &&
           scrollerOffsetY.value < 10) ||
-        (pullupState.value === PullingRefreshStatus.PULLING &&
+        ([
+          PullingRefreshStatus.PULLING,
+          PullingRefreshStatus.PULLINGGO,
+        ].includes(pullupState.value) &&
           Math.floor(contentY.value - containerY.value) -
             Math.floor(scrollerOffsetY.value) <
             10)
@@ -264,7 +276,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
   return (
     <View style={[styles.flex, style]}>
       <Animated.View style={[styles.loaderContainer, pulldownLoadingAnimation]}>
-        {typeof Loader === 'function' ? <Loader /> : Loader}
+        <Loader loaderState={pulldownState} />
       </Animated.View>
 
       <GestureDetector gesture={panGesture}>
@@ -291,7 +303,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
       <Animated.View
         style={[styles.loaderContainer, pullupLoadingAnimation, { bottom: 0 }]}
       >
-        {typeof Loader === 'function' ? <Loader /> : Loader}
+        <Loader loaderState={pullupState} />
       </Animated.View>
     </View>
   );

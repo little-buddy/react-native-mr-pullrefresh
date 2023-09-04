@@ -2,21 +2,25 @@
 
 react-native pull refresh on iOS, Android and Web
 
-## Installation
+<!-- ## Installation
 
 ```sh
-npm install react-native-mr-refresh
-```
+npm install react-native-mr-pullrefresh
+``` -->
 
 ## Usage
 
-```js
+<!-- ```js
 import { multiply } from 'react-native-mr-refresh';
 
 // ...
 
 const result = await multiply(3, 7);
-```
+``` -->
+
+## Example on iOS
+![run on iOS](./gifs/ddd.gif)
+
 
 ## Contributing
 

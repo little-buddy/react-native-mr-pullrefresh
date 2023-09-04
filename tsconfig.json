@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "react-native-mr-refresh": ["./src/index"]
+      "react-native-mr-pullrefresh": ["./src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
