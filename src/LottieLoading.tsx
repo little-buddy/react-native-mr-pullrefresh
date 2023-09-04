@@ -17,16 +17,16 @@ export const HeroLottie = () => {
 
   const ctx = useMrPullRefreshValue();
 
-  const { pulldownHeight, panTranlateY } = ctx;
+  const { pulldownHeight, panTranslateY } = ctx;
 
   const animatedStyle = useAnimatedStyle(() => ({
     height: interpolate(
-      panTranlateY.value,
+      panTranslateY.value,
       [0, pulldownHeight],
       [pulldownHeight * 0.2, pulldownHeight],
       Extrapolate.CLAMP
     ),
-    opacity: interpolate(panTranlateY.value, [0, pulldownHeight], [0, 1]),
+    opacity: interpolate(panTranslateY.value, [0, pulldownHeight], [0, 1]),
   }));
 
   useOnPulldownState(value => {

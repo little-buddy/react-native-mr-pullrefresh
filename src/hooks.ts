@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import {
+  Extrapolate,
   interpolate,
   runOnJS,
   useAnimatedReaction,
@@ -38,17 +39,18 @@ export const useOnPulldownState = (
 export const usePulldownLoadingAnimation = () => {
   const ctx = useMrPullRefreshValue();
 
-  const { pulldownHeight, panTranlateY } = ctx;
+  const { pulldownHeight, panTranslateY } = ctx;
 
   const x = useAnimatedStyle(() => ({
     height: pulldownHeight,
-    opacity: interpolate(panTranlateY.value, [0, pulldownHeight], [0, 1]),
+    opacity: interpolate(panTranslateY.value, [0, pulldownHeight], [0, 1]),
     transform: [
       {
         translateY: interpolate(
-          panTranlateY.value,
-          [0, pulldownHeight, windowHeight],
-          [-pulldownHeight, 0, 0]
+          panTranslateY.value,
+          [0, pulldownHeight],
+          [-pulldownHeight, 0],
+          Extrapolate.CLAMP
         ),
       },
     ],
@@ -75,15 +77,16 @@ export const useOnPullupState = (
 export const usePullupLoadingAnimation = () => {
   const ctx = useMrPullRefreshValue();
 
-  const { pullupHeight, panTranlateY } = ctx;
+  const { pullupHeight, panTranslateY } = ctx;
 
   return useAnimatedStyle(() => ({
     height: pullupHeight,
-    opacity: interpolate(-panTranlateY.value, [0, pullupHeight], [0, 1]),
+    opacity: interpolate(-panTranslateY.value, [0, pullupHeight], [0, 1]),
     translateY: interpolate(
-      -panTranlateY.value,
-      [0, pullupHeight, windowHeight],
-      [pullupHeight, 0, 0]
+      -panTranslateY.value,
+      [0, pullupHeight],
+      [pullupHeight, 0],
+      Extrapolate.CLAMP
     ),
   }));
 };

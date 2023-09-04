@@ -53,7 +53,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
   const pullupState = useSharedValue<PullingRefreshStatus>(
     PullingRefreshStatus.IDLE
   );
-  const panTranlateY = useSharedValue(0);
+  const panTranslateY = useSharedValue(0);
   const scrollerOffsetY = useSharedValue(0);
   const contentY = useSharedValue(0);
   const containerY = useSharedValue(0);
@@ -67,7 +67,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
 
     runOnUI(() => {
       pulldownState.value = PullingRefreshStatus.BACKUP;
-      panTranlateY.value = withTiming(0, undefined, (finished?: boolean) => {
+      panTranslateY.value = withTiming(0, undefined, (finished?: boolean) => {
         if (finished) {
           pulldownState.value = PullingRefreshStatus.IDLE;
         }
@@ -84,7 +84,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
 
     runOnUI(() => {
       pullupState.value = PullingRefreshStatus.BACKUP;
-      panTranlateY.value = withTiming(0, undefined, (finished?: boolean) => {
+      panTranslateY.value = withTiming(0, undefined, (finished?: boolean) => {
         if (finished) {
           pullupState.value = PullingRefreshStatus.IDLE;
         }
@@ -107,6 +107,9 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
     })
     .onChange(event => {
       // TODO: 回拉的时候还需要判断处理
+
+      // TODO: chang
+      // console.log(event.translationY);
 
       if (enablePullup) {
         if (event.translationY >= 0) {
@@ -150,19 +153,20 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
             10 &&
           enablePullup)
       ) {
-        panTranlateY.value = event.translationY;
+        // console.log('change panTranslate',,);
+        panTranslateY.value = event.translationY;
       }
     })
     .onEnd(() => {
       if (pulldownState.value !== PullingRefreshStatus.IDLE) {
         pulldownState.value =
-          panTranlateY.value >= pulldownHeight
+          panTranslateY.value >= pulldownHeight
             ? PullingRefreshStatus.PULLINGBACK
             : PullingRefreshStatus.BACKUP;
 
         // console.log(refreshState.current,moveY.value,refreshHeight)
         if (pulldownState.value === PullingRefreshStatus.BACKUP) {
-          panTranlateY.value = withTiming(0, undefined, finished => {
+          panTranslateY.value = withTiming(0, undefined, finished => {
             if (finished) {
               pulldownState.value = PullingRefreshStatus.IDLE;
             }
@@ -170,7 +174,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
         }
 
         if (pulldownState.value === PullingRefreshStatus.PULLINGBACK) {
-          panTranlateY.value = withTiming(
+          panTranslateY.value = withTiming(
             pulldownHeight,
             undefined,
             finished => {
@@ -185,13 +189,13 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
 
       if (pullupState.value !== PullingRefreshStatus.IDLE && enablePullup) {
         pullupState.value =
-          -panTranlateY.value >= pullupHeight
+          -panTranslateY.value >= pullupHeight
             ? PullingRefreshStatus.PULLINGBACK
             : PullingRefreshStatus.BACKUP;
 
         // console.log(refreshState.current,moveY.value,refreshHeight)
         if (pullupState.value === PullingRefreshStatus.BACKUP) {
-          panTranlateY.value = withTiming(0, undefined, finished => {
+          panTranslateY.value = withTiming(0, undefined, finished => {
             if (finished) {
               pullupState.value = PullingRefreshStatus.IDLE;
             }
@@ -199,7 +203,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
         }
 
         if (pullupState.value === PullingRefreshStatus.PULLINGBACK) {
-          panTranlateY.value = withTiming(
+          panTranslateY.value = withTiming(
             -pullupHeight,
             undefined,
             finished => {
@@ -233,7 +237,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
       transform: [
         {
           translateY: interpolate(
-            panTranlateY.value,
+            panTranslateY.value,
             input,
             output,
             Extrapolate.CLAMP
@@ -284,7 +288,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
       value={{
         pulldownState,
         pullupState,
-        panTranlateY,
+        panTranslateY,
         scrollerOffsetY,
         contentY,
         containerY,
@@ -307,6 +311,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
                   // @ts-ignore
                   onContentSizeChange,
                   onScroll,
+                  bounces: false,
                 }
               )}
             </GestureDetector>

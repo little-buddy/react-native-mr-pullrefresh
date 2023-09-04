@@ -6,7 +6,7 @@ import type { PullingRefreshStatus } from './constants';
 interface MrPullRefreshContextValue {
   pulldownState: SharedValue<PullingRefreshStatus>;
   pullupState: SharedValue<PullingRefreshStatus>;
-  panTranlateY: SharedValue<number>;
+  panTranslateY: SharedValue<number>;
   scrollerOffsetY: SharedValue<number>;
   contentY: SharedValue<number>;
   containerY: SharedValue<number>;
