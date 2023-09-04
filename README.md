@@ -20,7 +20,17 @@ import { MrPullRefresh } from 'react-native-mr-pullrefresh';
   onPullupRefresh={upLoader}
   style={{ flex: 1 }}
 >
- {/* children */}
+
+  <Animated.FlatList
+    data={[]}
+    renderItem={() => null}
+  />
+
+ {/* or*/}
+
+  <Animated.ScrollView>
+    {/* children */}
+  </Animated.ScrollView>
 </MrPullRefresh>
 ```
 
@@ -33,9 +43,6 @@ import { MrPullRefresh } from 'react-native-mr-pullrefresh';
 | pulldownHeight  |             |
 | pullupHeight    |             |
 | enablePullup    |             |
-| hitSlop         |             |
-| scroller        |             |
-| scrollProps     |             |
 | pulldownLoading | Component   |
 | pullupLoading   | Component   |
 
@@ -43,6 +50,9 @@ import { MrPullRefresh } from 'react-native-mr-pullrefresh';
 | ----------------- | ----------- |
 | onPulldownRefresh |             |
 | onPullupRefresh   |             |
+
+## Note
+`react-native-mr-pullrefresh` Only support wrapper `Animated.ScrollView` and `Animated.FlatList`
 
 ## Contributing
 

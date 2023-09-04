@@ -2,6 +2,7 @@ import * as React from 'react';
 import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { delayTime, MrPullRefresh } from 'react-native-mr-pullrefresh';
+import Animated from 'react-native-reanimated';
 
 export default function App() {
   const [data, setData] = React.useState<number[]>([]);
@@ -15,9 +16,6 @@ export default function App() {
     await delayTime(5000);
     setData(Array(300).fill(0));
   };
-  // React.useEffect(() => {
-  //   loader();
-  // }, []);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -27,14 +25,18 @@ export default function App() {
             onPulldownRefresh={downLoader}
             onPullupRefresh={upLoader}
             style={{ width: '100%' }}
-            scrollProps={{
-              bounces: false,
-              style: { flex: 1, backgroundColor: 'yellow', width: '100%' },
-            }}
           >
-            {data.map((_, index) => (
-              <Text key={index}>Result: {index} </Text>
-            ))}
+            {/* <Animated.FlatList
+              data={[]}
+              renderItem={() => null}
+              style={{ flex: 1, backgroundColor: 'yellow' }}
+            /> */}
+
+            <Animated.ScrollView style={{ flex: 1, backgroundColor: 'yellow' }}>
+              {data.map((_, index) => (
+                <Text key={index}>Result: {index} </Text>
+              ))}
+            </Animated.ScrollView>
           </MrPullRefresh>
         </View>
       </GestureHandlerRootView>
@@ -49,7 +51,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     // backgroundColor: '#ff8080',
-    overflow: 'hidden',
   },
   box: {
     width: 60,

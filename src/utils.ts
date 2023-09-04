@@ -1,6 +1,7 @@
 //
-
+import React from 'react';
 import { Dimensions } from 'react-native';
+import Animated from 'react-native-reanimated';
 
 export const delayTime = (time = 1000) =>
   new Promise((resolve: PromiseCallback<unknown>) => {
@@ -16,4 +17,19 @@ export const isPromise = (p: any) => {
   }
 
   return false;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const checkChildren = (children: React.ReactElement<unknown, any>) => {
+  const onlyChild = React.Children.only(children);
+
+  if ([Animated.FlatList, Animated.ScrollView].includes(onlyChild.type)) {
+    return onlyChild;
+  }
+
+  throw new Error(`[react-native-mr-pullrefresh]
+    MrPullRefresh only support
+      Animated.ScrollView、
+      Animated.FlatList
+    as a Child`);
 };

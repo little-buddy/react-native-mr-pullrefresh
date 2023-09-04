@@ -6,7 +6,6 @@ import type {
 } from 'react-native';
 import { StyleSheet, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { type HitSlop } from 'react-native-gesture-handler/lib/typescript/handlers/gestureHandlerCommon';
 import Animated, {
   Extrapolate,
   interpolate,
@@ -20,9 +19,9 @@ import Animated, {
 
 import { FnNull, PullingRefreshStatus } from './constants';
 import { MrPullRefreshContext } from './context';
-import { PulldownLoading, PullupLoading } from './DefaultLoading';
+import { PullupLoading } from './DefaultLoading';
 import { HeroLottie } from './LottieLoading';
-import { getWindowHeight, isPromise } from './utils';
+import { checkChildren, getWindowHeight, isPromise } from './utils';
 interface MrRefreshWrapperProps {
   onPulldownRefresh?: () => void | Promise<unknown>;
   onPullupRefresh?: () => void | Promise<unknown>;
@@ -31,11 +30,7 @@ interface MrRefreshWrapperProps {
   pulldownLoading?: JSX.Element;
   pullupLoading?: JSX.Element;
   enablePullup?: boolean;
-  hitSlop?: HitSlop;
   style?: ViewStyle;
-  scroller?: JSX.Element;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  scrollProps: any;
 }
 
 const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
@@ -46,10 +41,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
   pulldownLoading = <HeroLottie />,
   pullupLoading = <PullupLoading />,
   enablePullup = true,
-  hitSlop,
   style,
-  scroller = Animated.ScrollView,
-  scrollProps = {},
   children,
 }) => {
   const windowHeight = getWindowHeight();
@@ -221,10 +213,6 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
       }
     });
 
-  if (hitSlop !== undefined) {
-    panGesture.hitSlop(hitSlop);
-  }
-
   const contentAnimation = useAnimatedStyle(() => {
     const isPulldown = pulldownState.value !== PullingRefreshStatus.IDLE;
 
@@ -260,8 +248,12 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
     console.log(event.contentOffset, event.contentInset);
     scrollerOffsetY.value = y;
 
-    if (scrollProps.onScroll) {
-      runOnJS(scrollProps.onScroll)(event);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    if (children.onScroll) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      runOnJS(children.onScroll)(event);
     }
   });
 
@@ -275,11 +267,17 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
   const onContentSizeChange = useCallback(
     (_width: number, height: number) => {
       contentY.value = height;
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      if (children.onContentSizeChange) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        children.onContentSizeChange(event);
+      }
     },
-    [contentY]
+    [contentY, children]
   );
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const Scroller: any = scroller;
 
   return (
     <MrPullRefreshContext.Provider
@@ -294,7 +292,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
         pullupHeight,
       }}
     >
-      <View style={[styles.flex, style]}>
+      <View style={[styles.flex, styles.overhidden, style]}>
         {pulldownLoading}
         <GestureDetector gesture={panGesture}>
           <Animated.View
@@ -302,13 +300,15 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
             style={[styles.flex, styles.zTop, contentAnimation]}
           >
             <GestureDetector gesture={Gesture.Simultaneous(panGesture, native)}>
-              <Scroller
-                {...scrollProps}
-                onScroll={onScroll}
-                onContentSizeChange={onContentSizeChange}
-              >
-                {children}
-              </Scroller>
+              {React.cloneElement(
+                checkChildren(children as React.ReactElement),
+                {
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore
+                  onContentSizeChange,
+                  onScroll,
+                }
+              )}
             </GestureDetector>
           </Animated.View>
         </GestureDetector>
@@ -324,6 +324,9 @@ const styles = StyleSheet.create({
   },
   zTop: {
     zIndex: 2,
+  },
+  overhidden: {
+    overflow: 'hidden',
   },
   loaderContainer: {
     position: 'absolute',
