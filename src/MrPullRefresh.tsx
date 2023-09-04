@@ -237,6 +237,11 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
     }
 
     return {
+      pointerEvents: [pulldownState.value, pullupState.value].includes(
+        PullingRefreshStatus.LOADING
+      )
+        ? 'none'
+        : 'auto',
       transform: [
         {
           translateY: interpolate(

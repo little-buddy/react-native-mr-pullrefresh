@@ -27,23 +27,6 @@ export const HeroLottie = () => {
       Extrapolate.CLAMP
     ),
     opacity: interpolate(panTranlateY.value, [0, pulldownHeight], [0, 1]),
-    transform: [
-      // {
-      //   translateY: interpolate(
-      //     panTranlateY.value,
-      //     [0, pulldownHeight, windowHeight],
-      //     [pulldownHeight, 0, 0]
-      //   ),
-      // },
-      // {
-      //   scale: interpolate(
-      //     panTranlateY.value,
-      //     [0, pulldownHeight],
-      //     [0.2, 1],
-      //     Extrapolate.CLAMP
-      //   ),
-      // },
-    ],
   }));
 
   useOnPulldownState(value => {
