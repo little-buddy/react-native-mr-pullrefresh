@@ -19,7 +19,7 @@ const result = await multiply(3, 7);
 ``` -->
 
 ## Example on iOS
-![run on iOS](./gifs/ddd.gif)
+<img src="./gifs/ddd.gif" alt="ios-example" width="240">
 
 
 ## Contributing
