@@ -1,3 +1,3 @@
 export * from './constants';
-export { MrRefresh } from './MrRefresh';
+export { MrPullRefresh } from './MrPullRefresh';
 export * from './utils';

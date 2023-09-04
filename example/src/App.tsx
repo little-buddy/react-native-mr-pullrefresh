@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { delayTime, MrRefresh } from 'react-native-mr-pullrefresh';
+import { delayTime, MrPullRefresh } from 'react-native-mr-pullrefresh';
 
 export default function App() {
   const [data, setData] = React.useState<number[]>([]);
@@ -23,7 +23,7 @@ export default function App() {
     <SafeAreaView style={{ flex: 1 }}>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <View style={styles.container}>
-          <MrRefresh
+          <MrPullRefresh
             onPulldownRefresh={downLoader}
             onPullupRefresh={upLoader}
             style={{ width: '100%' }}
@@ -35,7 +35,7 @@ export default function App() {
             {data.map((_, index) => (
               <Text key={index}>Result: {index} </Text>
             ))}
-          </MrRefresh>
+          </MrPullRefresh>
         </View>
       </GestureHandlerRootView>
     </SafeAreaView>

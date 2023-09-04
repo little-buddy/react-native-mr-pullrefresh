@@ -15,14 +15,16 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { FnNull, PullingRefreshStatus } from './constants';
-import DefaultLoader from './Loader';
+import { MrPullRefreshContext } from './context';
+import { PulldownLoading, PullupLoading } from './DefaultLoading';
 import { getWindowHeight, isPromise } from './utils';
 interface MrRefreshWrapperProps {
   onPulldownRefresh?: () => void | Promise<unknown>;
   onPullupRefresh?: () => void | Promise<unknown>;
   pulldownHeight?: number;
   pullupHeight?: number;
-  Loader?: () => JSX.Element | JSX.Element;
+  pulldownLoading: JSX.Element;
+  pullupLoading: JSX.Element;
   bounces?: Blob;
   hitSlop?: HitSlop;
   style?: ViewStyle;
@@ -36,8 +38,8 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
   onPullupRefresh = FnNull,
   pulldownHeight = 100,
   pullupHeight = 100,
-  children = null,
-  Loader = DefaultLoader,
+  pulldownLoading = <PulldownLoading />,
+  pullupLoading = <PullupLoading />,
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -47,6 +49,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
   style,
   scroller = Animated.ScrollView,
   scrollProps = {},
+  children,
 }) => {
   const windowHeight = getWindowHeight();
 
@@ -211,30 +214,6 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
     panGesture.hitSlop(hitSlop);
   }
 
-  const pulldownLoadingAnimation = useAnimatedStyle(() => ({
-    height: pulldownHeight,
-    opacity: interpolate(panTranlateY.value, [0, pulldownHeight], [0, 1]),
-    transform: [
-      {
-        translateY: interpolate(
-          panTranlateY.value,
-          [0, pulldownHeight, windowHeight],
-          [-pulldownHeight, 0, 0]
-        ),
-      },
-    ],
-  }));
-
-  const pullupLoadingAnimation = useAnimatedStyle(() => ({
-    height: pullupHeight,
-    opacity: interpolate(-panTranlateY.value, [0, pullupHeight], [0, 1]),
-    translateY: interpolate(
-      -panTranlateY.value,
-      [0, pullupHeight, windowHeight],
-      [pullupHeight, 0, 0]
-    ),
-  }));
-
   const contentAnimation = useAnimatedStyle(() => {
     const isPulldown = pulldownState.value !== PullingRefreshStatus.IDLE;
 
@@ -274,38 +253,43 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
   const Scroller: any = scroller;
 
   return (
-    <View style={[styles.flex, style]}>
-      <Animated.View style={[styles.loaderContainer, pulldownLoadingAnimation]}>
-        <Loader loaderState={pulldownState} />
-      </Animated.View>
-
-      <GestureDetector gesture={panGesture}>
-        <Animated.View
-          onLayout={event => {
-            containerY.value = event.nativeEvent.layout.height;
-          }}
-          style={[styles.flex, contentAnimation]}
-        >
-          <GestureDetector gesture={Gesture.Simultaneous(panGesture, native)}>
-            <Scroller
-              {...scrollProps}
-              onScroll={onScroll}
-              onContentSizeChange={(width: number, height: number) => {
-                contentY.value = height;
-              }}
-            >
-              {children}
-            </Scroller>
-          </GestureDetector>
-        </Animated.View>
-      </GestureDetector>
-
-      <Animated.View
-        style={[styles.loaderContainer, pullupLoadingAnimation, { bottom: 0 }]}
-      >
-        <Loader loaderState={pullupState} />
-      </Animated.View>
-    </View>
+    <MrPullRefreshContext.Provider
+      value={{
+        pulldownState,
+        pullupState,
+        panTranlateY,
+        scrollerOffsetY,
+        contentY,
+        containerY,
+        pulldownHeight,
+        pullupHeight,
+      }}
+    >
+      <View style={[styles.flex, style]}>
+        {pulldownLoading}
+        <GestureDetector gesture={panGesture}>
+          <Animated.View
+            onLayout={event => {
+              containerY.value = event.nativeEvent.layout.height;
+            }}
+            style={[styles.flex, contentAnimation]}
+          >
+            <GestureDetector gesture={Gesture.Simultaneous(panGesture, native)}>
+              <Scroller
+                {...scrollProps}
+                onScroll={onScroll}
+                onContentSizeChange={(width: number, height: number) => {
+                  contentY.value = height;
+                }}
+              >
+                {children}
+              </Scroller>
+            </GestureDetector>
+          </Animated.View>
+        </GestureDetector>
+        {pullupLoading}
+      </View>
+    </MrPullRefreshContext.Provider>
   );
 };
 
@@ -321,4 +305,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export const MrRefresh = memo(MrRefreshWrapper);
+export const MrPullRefresh = memo(MrRefreshWrapper);
