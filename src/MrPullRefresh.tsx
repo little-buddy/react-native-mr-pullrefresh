@@ -43,7 +43,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
   onPullupRefresh = FnNull,
   pulldownHeight = 140,
   pullupHeight = 100,
-  pulldownLoading = <PulldownLoading />,
+  pulldownLoading = <HeroLottie />,
   pullupLoading = <PullupLoading />,
   enablePullup = true,
   hitSlop,
@@ -109,28 +109,38 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
         pulldownState.value = PullingRefreshStatus.PULLING;
       }
 
-      if (pullupState.value === PullingRefreshStatus.IDLE) {
+      if (pullupState.value === PullingRefreshStatus.IDLE && enablePullup) {
         pullupState.value = PullingRefreshStatus.PULLING;
       }
     })
     .onChange(event => {
       // TODO: 回拉的时候还需要判断处理
 
+      if (enablePullup) {
+        if (event.translationY >= 0) {
+          pullupState.value = PullingRefreshStatus.IDLE;
+        } else {
+          pullupState.value =
+            -event.translationY > pullupHeight
+              ? PullingRefreshStatus.PULLINGGO
+              : PullingRefreshStatus.PULLING;
+        }
+      }
+
       if (event.translationY >= 0) {
-        pullupState.value = PullingRefreshStatus.IDLE;
         pulldownState.value =
           event.translationY > pulldownHeight
             ? PullingRefreshStatus.PULLINGGO
             : PullingRefreshStatus.PULLING;
       } else {
         pulldownState.value = PullingRefreshStatus.IDLE;
-        pullupState.value =
-          -event.translationY > pullupHeight
-            ? PullingRefreshStatus.PULLINGGO
-            : PullingRefreshStatus.PULLING;
       }
 
-      console.log(scrollerOffsetY.value, contentY.value - containerY.value);
+      console.log(
+        'debug',
+        scrollerOffsetY.value,
+        contentY.value - containerY.value
+      );
 
       // TODO: 而且你会发现它这里其实是有修正偏差的
       if (
@@ -145,7 +155,8 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
         ].includes(pullupState.value) &&
           Math.floor(contentY.value - containerY.value) -
             Math.floor(scrollerOffsetY.value) <
-            10)
+            10 &&
+          enablePullup)
       ) {
         panTranlateY.value = event.translationY;
       }
@@ -180,7 +191,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
         }
       }
 
-      if (pullupState.value !== PullingRefreshStatus.IDLE) {
+      if (pullupState.value !== PullingRefreshStatus.IDLE && enablePullup) {
         pullupState.value =
           -panTranlateY.value >= pullupHeight
             ? PullingRefreshStatus.PULLINGBACK
@@ -279,10 +290,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
       }}
     >
       <View style={[styles.flex, style]}>
-        {/* {pulldownLoading} */}
-
-        <HeroLottie />
-
+        {pulldownLoading}
         <GestureDetector gesture={panGesture}>
           <Animated.View
             onLayout={onLayout}

@@ -27,6 +27,22 @@ import { MrPullRefresh } from 'react-native-mr-pullrefresh';
 ## Example on iOS
 <img src="./gifs/ddd.gif" alt="ios-example" width="240">
 
+## Props
+| props           | description |
+| --------------- | ----------- |
+| pulldownHeight  |             |
+| pullupHeight    |             |
+| enablePullup    |             |
+| hitSlop         |             |
+| scroller        |             |
+| scrollProps     |             |
+| pulldownLoading | Component   |
+| pullupLoading   | Component   |
+
+| event             | description |
+| ----------------- | ----------- |
+| onPulldownRefresh |             |
+| onPullupRefresh   |             |
 
 ## Contributing
 
