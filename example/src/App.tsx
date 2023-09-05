@@ -18,7 +18,7 @@ export default function App() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f6f8fa' }}>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <View style={styles.container}>
           <MrPullRefresh

@@ -5,9 +5,11 @@ import Animated, {
   Extrapolate,
   interpolate,
   useAnimatedStyle,
+  useDerivedValue,
 } from 'react-native-reanimated';
 
 import heroJson from './assets/hero.json';
+import heroLottie from './assets/hero.lottie';
 import { PullingRefreshStatus } from './constants';
 import { useMrPullRefreshValue, useOnPulldownState } from './hooks';
 const AnimatedLottieView = Animated.createAnimatedComponent(LottieView);
@@ -17,7 +19,7 @@ export const HeroLottie = () => {
 
   const ctx = useMrPullRefreshValue();
 
-  const { pulldownHeight, panTranslateY } = ctx;
+  const { pulldownHeight, panTranslateY, pulldownState } = ctx;
 
   const animatedStyle = useAnimatedStyle(() => ({
     height: interpolate(
@@ -39,6 +41,20 @@ export const HeroLottie = () => {
     }
   });
 
+  const progress = useDerivedValue(() =>
+    [PullingRefreshStatus.BACKUP, PullingRefreshStatus.PULLING].includes(
+      pulldownState.value
+    )
+      ? interpolate(
+          panTranslateY.value,
+          [0, pulldownHeight],
+          [0, 1],
+          Extrapolate.CLAMP
+        )
+      : undefined
+  );
+
+  // TODO: Fixed Do it.
   return (
     <Animated.View
       style={[
@@ -47,14 +63,18 @@ export const HeroLottie = () => {
           top: 0,
           width: '100%',
           height: pulldownHeight,
-          backgroundColor: '#f6f8fa',
         },
       ]}
     >
       <AnimatedLottieView
+        progress={progress}
         style={[styles.fullBox, animatedStyle]}
         ref={lottieRef}
         source={heroJson}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        // sourceDotLottieURI={heroLottie}
+        autoPlay={true}
       />
     </Animated.View>
   );

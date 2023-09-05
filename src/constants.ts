@@ -14,6 +14,7 @@ export const iOSpringConfig = {
   mass: 1,
   damping: 15,
   stiffness: 100,
+  overshootClamping: true,
 };
 
 export const FnNull = () => {
