@@ -227,13 +227,16 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
 
   const contentAnimation = useAnimatedStyle(() => {
     const isPulldown = pulldownState.value !== PullingRefreshStatus.IDLE;
-
-    let input = [0, pulldownHeight, windowHeight];
-    let output = [0, pulldownHeight, pulldownHeight * 1.2];
+    let input: [number, number, number] = [0, pulldownHeight, windowHeight];
+    let output: [number, number, number] = [
+      0,
+      pulldownHeight,
+      pulldownHeight * 3,
+    ];
 
     if (!isPulldown) {
-      input = [windowHeight, -pullupHeight, 0];
-      output = [-pullupHeight * 1.2, -pullupHeight, 0];
+      input = [-windowHeight, -pullupHeight, 0];
+      output = [-pullupHeight * 3, -pullupHeight, 0];
     }
 
     return {

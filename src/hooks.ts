@@ -9,9 +9,6 @@ import {
 
 import { type PullingRefreshStatus } from './constants';
 import { MrPullRefreshContext } from './context';
-import { getWindowHeight } from './utils';
-
-const windowHeight = getWindowHeight();
 
 export const useMrPullRefreshValue = () => {
   const value = useContext(MrPullRefreshContext);
@@ -48,8 +45,8 @@ export const usePulldownLoadingAnimation = () => {
       {
         translateY: interpolate(
           panTranslateY.value,
-          [0, pulldownHeight],
-          [-pulldownHeight, 0],
+          [0, pulldownHeight * 2],
+          [-pulldownHeight * 2, 0],
           Extrapolate.CLAMP
         ),
       },
