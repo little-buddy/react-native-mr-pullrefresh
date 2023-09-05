@@ -2,6 +2,15 @@
 
 react-native pull refresh on iOS, Android and Web
 
+```
+
+  /\/\  _ __        / _ \_   _| | | /__\ ___ / _|_ __ ___  ___| |__
+ /    \| '__|      / /_)/ | | | | |/ \/// _ \ |_| '__/ _ \/ __| '_ \
+/ /\/\ \ |     _  / ___/| |_| | | / _  \  __/  _| | |  __/\__ \ | | |
+\/    \/_|    (_) \/     \__,_|_|_\/ \_/\___|_| |_|  \___||___/_| |_|
+
+```
+
 ## ⚠️ Warning
 `react-native-mr-pullrefresh` Only support wrapper `Animated.ScrollView` and `Animated.FlatList`
 
