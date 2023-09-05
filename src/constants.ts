@@ -17,6 +17,8 @@ export const iOSpringConfig = {
   overshootClamping: true,
 };
 
+export const SystemOffset = 5;
+
 export const FnNull = () => {
   /*  */
 };

@@ -7,6 +7,14 @@ react-native pull refresh on iOS, Android and Web
 
 not support nested MrPullRefresh!
 
+## 💪🏻 Support
+| Platform |             |
+| -------- | ----------- |
+| iOS      | ✅           |
+| Android  | Fixing bugs |
+| Web      | Soon...     |
+
+
 <!-- ## Installation
 
 ```sh
