@@ -1,15 +1,16 @@
 const typeMap = {
-  feat: '✨ Features',
+  feat: '🎸 Features',
   fix: '🐛 Bug Fixes',
   perf: '⚡ Performance Improvements',
   revert: '⏪ Reverts',
-  docs: '📝 Documentation',
+  docs: '✏️ Documentation',
   style: '💄 Styles',
-  refactor: '♻ Code Refactoring',
-  test: '✅ Tests',
+  refactor: '💡 Code Refactoring',
+  test: '💍 Tests',
   build: '👷‍ Build System',
-  ci: '🔧 Continuous Integration',
-  chore: '🎫 Chores',
+  ci: '🎡 Continuous Integration',
+  chore: '🤖 Chores',
+  release: '🏹 Release',
 };
 
 const createTypes = () => {
