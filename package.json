@@ -85,7 +85,8 @@
     "react": "*",
     "react-native": "*",
     "react-native-gesture-handler": "*",
-    "react-native-reanimated": "*"
+    "react-native-reanimated": "*",
+    "lottie-react-native": "*"
   },
   "engines": {
     "node": ">= 18.0.0"

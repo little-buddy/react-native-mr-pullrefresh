@@ -9,7 +9,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import heroJson from './assets/hero.json';
-import heroLottie from './assets/hero.lottie';
+// import heroLottie from './assets/hero.lottie';
 import { PullingRefreshStatus } from './constants';
 import { useMrPullRefreshValue, useOnPulldownState } from './hooks';
 const AnimatedLottieView = Animated.createAnimatedComponent(LottieView);

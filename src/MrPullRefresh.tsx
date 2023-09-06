@@ -15,19 +15,24 @@ import Animated, {
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
-  withSpring,
 } from 'react-native-reanimated';
 
 import {
+  BackFactor,
   FnNull,
-  iOSpringConfig,
+  LogFlag,
   PullingRefreshStatus,
   SystemOffset,
 } from './constants';
 import { MrPullRefreshContext } from './context';
 import { PullupLoading } from './DefaultLoading';
 import { HeroLottie } from './LottieLoading';
-import { checkChildren, getWindowHeight, isPromise } from './utils';
+import {
+  checkChildren,
+  getWindowHeight,
+  isPromise,
+  withAnimation,
+} from './utils';
 interface MrRefreshWrapperProps {
   onPulldownRefresh?: () => void | Promise<unknown>;
   onPullupRefresh?: () => void | Promise<unknown>;
@@ -46,10 +51,11 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
   pullupHeight = 100,
   pulldownLoading = <HeroLottie />,
   pullupLoading = <PullupLoading />,
-  enablePullup = true,
+  enablePullup = true /* TODO: will re-render */,
   style,
   children,
 }) => {
+  // TODO: will check it.
   const windowHeight = getWindowHeight();
 
   // custom
@@ -59,11 +65,12 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
   const pullupState = useSharedValue<PullingRefreshStatus>(
     PullingRefreshStatus.IDLE
   );
-  const panTranslateY = useSharedValue(0);
-  const scrollerOffsetY = useSharedValue(0);
-  const contentY = useSharedValue(0);
   const containerY = useSharedValue(0);
+  const contentY = useSharedValue(0);
+  const scrollerOffsetY = useSharedValue(0);
+  const panTranslateY = useSharedValue(0);
 
+  // TODO: By ClassComponent ?
   const onPulldownLoading = async () => {
     const res = onPulldownRefresh();
 
@@ -73,15 +80,9 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
 
     runOnUI(() => {
       pulldownState.value = PullingRefreshStatus.BACKUP;
-      panTranslateY.value = withSpring(
-        0,
-        iOSpringConfig,
-        (finished?: boolean) => {
-          if (finished) {
-            pulldownState.value = PullingRefreshStatus.IDLE;
-          }
-        }
-      );
+      panTranslateY.value = withAnimation(0, () => {
+        pulldownState.value = PullingRefreshStatus.IDLE;
+      });
     })();
   };
 
@@ -94,32 +95,27 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
 
     runOnUI(() => {
       pullupState.value = PullingRefreshStatus.BACKUP;
-      panTranslateY.value = withSpring(
-        0,
-        iOSpringConfig,
-        (finished?: boolean) => {
-          if (finished) {
-            pullupState.value = PullingRefreshStatus.IDLE;
-          }
-        }
-      );
+      panTranslateY.value = withAnimation(0, () => {
+        pullupState.value = PullingRefreshStatus.IDLE;
+      });
     })();
   };
 
   const canPulldown = useDerivedValue(
-    () => scrollerOffsetY.value < SystemOffset
+    () => scrollerOffsetY.value <= SystemOffset
   );
 
+  // TODO: whether need Math.floor
   const canPullup = useDerivedValue(
     () =>
-      Math.floor(contentY.value - containerY.value) -
-        Math.floor(scrollerOffsetY.value) <=
-        SystemOffset && enablePullup,
+      scrollerOffsetY.value - (contentY.value - containerY.value) >= 0 &&
+      enablePullup,
     [enablePullup]
   );
 
-  // TODO: 还是这个问题，2个元素区域切换的时候存在时间偏差，导致不好判断临界条件
-  //       就显得异常不稳定
+  // TODO: There is time deviation when switching between two elements,
+  //       which makes it difficult to judge the critical condition,
+  //       it looks unusually unstable
   const native = Gesture.Native();
   const panGesture = Gesture.Pan()
     .onStart(event => {
@@ -139,15 +135,10 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
         pullupState.value = PullingRefreshStatus.PULLING;
       }
 
-      // console.log('canPulldown', scrollerOffsetY.value, SystemOffset);
-      // console.log('canPullup', scrollerOffsetY.value, SystemOffset);
-
-      console.log('onStart', pulldownState.value, pullupState.value);
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions, @typescript-eslint/no-unnecessary-condition, no-console
+      LogFlag && console.log('onStart', pulldownState.value, pullupState.value);
     })
     .onChange(event => {
-      // TODO: 回拉的时候还需要判断处理
-      console.log(canPullup.value);
-
       if (canPullup.value) {
         if (event.translationY >= 0) {
           pullupState.value = PullingRefreshStatus.IDLE;
@@ -186,16 +177,21 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
         panTranslateY.value = event.translationY;
       }
 
-      console.log(
-        scrollerOffsetY.value,
-        contentY.value,
-        containerY.value,
-        Math.floor(contentY.value - containerY.value) -
-          Math.floor(scrollerOffsetY.value) <=
-          SystemOffset
-      );
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions, @typescript-eslint/no-unnecessary-condition
+      LogFlag &&
+        // eslint-disable-next-line no-console
+        console.log(
+          scrollerOffsetY.value,
+          contentY.value - containerY.value,
+          contentY.value,
+          containerY.value,
+          scrollerOffsetY.value - (contentY.value - containerY.value)
+        );
 
-      console.log('onChange', pulldownState.value, pullupState.value);
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions, @typescript-eslint/no-unnecessary-condition
+      LogFlag &&
+        // eslint-disable-next-line no-console
+        console.log('onChange', pulldownState.value, pullupState.value);
     })
     .onEnd(() => {
       if (canPulldown.value) {
@@ -205,84 +201,58 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
               ? PullingRefreshStatus.PULLINGBACK
               : PullingRefreshStatus.BACKUP;
 
-          // console.log(refreshState.current,moveY.value,refreshHeight)
           if (pulldownState.value === PullingRefreshStatus.BACKUP) {
-            panTranslateY.value = withSpring(0, iOSpringConfig, finished => {
-              if (finished) {
-                pulldownState.value = PullingRefreshStatus.IDLE;
-              }
+            panTranslateY.value = withAnimation(0, () => {
+              pulldownState.value = PullingRefreshStatus.IDLE;
             });
           }
 
           if (pulldownState.value === PullingRefreshStatus.PULLINGBACK) {
-            panTranslateY.value = withSpring(
-              pulldownHeight,
-              iOSpringConfig,
-              finished => {
-                if (finished) {
-                  pulldownState.value = PullingRefreshStatus.LOADING;
-                  runOnJS(onPulldownLoading)();
-                }
-              }
-            );
+            panTranslateY.value = withAnimation(pulldownHeight, () => {
+              pulldownState.value = PullingRefreshStatus.LOADING;
+              runOnJS(onPulldownLoading)();
+            });
           }
         }
       }
 
       if (canPullup.value) {
-        if (pullupState.value !== PullingRefreshStatus.IDLE && enablePullup) {
+        if (pullupState.value !== PullingRefreshStatus.IDLE) {
           pullupState.value =
             -panTranslateY.value >= pullupHeight
               ? PullingRefreshStatus.PULLINGBACK
               : PullingRefreshStatus.BACKUP;
 
-          // console.log(refreshState.current,moveY.value,refreshHeight)
           if (pullupState.value === PullingRefreshStatus.BACKUP) {
-            panTranslateY.value = withSpring(0, iOSpringConfig, finished => {
-              if (finished) {
-                pullupState.value = PullingRefreshStatus.IDLE;
-              }
+            panTranslateY.value = withAnimation(0, () => {
+              pullupState.value = PullingRefreshStatus.IDLE;
             });
           }
 
           if (pullupState.value === PullingRefreshStatus.PULLINGBACK) {
-            panTranslateY.value = withSpring(
-              -pullupHeight,
-              iOSpringConfig,
-              finished => {
-                if (finished) {
-                  pullupState.value = PullingRefreshStatus.LOADING;
-                  runOnJS(onPullupLoading)();
-                }
-              }
-            );
+            panTranslateY.value = withAnimation(-pullupHeight, () => {
+              pullupState.value = PullingRefreshStatus.LOADING;
+              runOnJS(onPullupLoading)();
+            });
           }
         }
       }
 
-      console.log('onEnd', pulldownState.value, pullupState.value);
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions, @typescript-eslint/no-unnecessary-condition, no-console
+      LogFlag && console.log('onEnd', pulldownState.value, pullupState.value);
     });
 
   const contentAnimation = useAnimatedStyle(() => {
     const isPulldown = pulldownState.value !== PullingRefreshStatus.IDLE;
-    let input: [number, number, number] = [0, pulldownHeight, windowHeight];
-    let output: [number, number, number] = [
-      0,
-      pulldownHeight,
-      pulldownHeight * 3,
-    ];
+    let input = [0, pulldownHeight, windowHeight];
+    let output = [0, pulldownHeight, pulldownHeight * BackFactor];
 
     if (!isPulldown) {
       input = [-windowHeight, -pullupHeight, 0];
-      output = [-pullupHeight * 3, -pullupHeight, 0];
+      output = [-pullupHeight * BackFactor, -pullupHeight, 0];
     }
 
     return {
-      pointerEvents: [pulldownState.value, pullupState.value].includes(
-        PullingRefreshStatus.LOADING
-      )
-        ? 'none'
-        : 'auto',
       transform: [
         {
           translateY: interpolate(
@@ -297,11 +267,11 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
   });
 
   const childrenWrapperStyle = useAnimatedStyle(() => ({
-    pointerEvents: 'auto',
-    // pullupState.value !== PullingRefreshStatus.IDLE ||
-    // pulldownState.value !== PullingRefreshStatus.IDLE
-    //   ? 'none'
-    //   : 'auto',
+    pointerEvents:
+      pullupState.value !== PullingRefreshStatus.IDLE ||
+      pulldownState.value !== PullingRefreshStatus.IDLE
+        ? 'none'
+        : 'auto',
   }));
 
   const onScroll = useAnimatedScrollHandler((event: NativeScrollEvent) => {
@@ -361,7 +331,6 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
             style={[styles.flex, styles.zTop, contentAnimation]}
           >
             <GestureDetector gesture={Gesture.Simultaneous(panGesture, native)}>
-              {/* <Animated.View style={[{ flex: 1 }, childrenWrapperStyle]}> */}
               {React.cloneElement(
                 checkChildren(children as React.ReactElement),
                 {
@@ -370,9 +339,11 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
                   onContentSizeChange,
                   onScroll,
                   bounces: false,
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore
+                  style: [children?.props?.style, childrenWrapperStyle],
                 }
               )}
-              {/* </Animated.View> */}
             </GestureDetector>
           </Animated.View>
         </GestureDetector>
@@ -391,12 +362,6 @@ const styles = StyleSheet.create({
   },
   overhidden: {
     overflow: 'hidden',
-  },
-  loaderContainer: {
-    position: 'absolute',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
   },
 });
 

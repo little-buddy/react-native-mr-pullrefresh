@@ -20,15 +20,15 @@ not support nested MrPullRefresh!
 | Platform |             |
 | -------- | ----------- |
 | iOS      | ✅           |
-| Android  | Fixing bugs |
+| Android  | ✅ |
 | Web      | Soon...     |
 
 
-<!-- ## Installation
+## Installation
 
 ```sh
-npm install react-native-mr-pullrefresh
-``` -->
+yarn install react-native-mr-pullrefresh
+```
 
 ## Usage
 

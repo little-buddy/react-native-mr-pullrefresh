@@ -21,7 +21,6 @@ export const useOnPulldownState = (
 ) => {
   const ctx = useMrPullRefreshValue();
 
-  // FIXME: Why always re-render
   useAnimatedReaction(
     () => ctx.pulldownState.value,
     (current, prev) => {

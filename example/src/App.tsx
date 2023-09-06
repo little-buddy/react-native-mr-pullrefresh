@@ -7,12 +7,12 @@ import Animated from 'react-native-reanimated';
 export default function App() {
   const [data, setData] = React.useState<number[]>([]);
 
-  const downLoader = async () => {
+  const pulldownLoader = async () => {
     await delayTime(5000);
     setData(Array(400).fill(0));
   };
 
-  const upLoader = async () => {
+  const pullupLoader = async () => {
     await delayTime(5000);
     setData(Array(300).fill(0));
   };
@@ -22,9 +22,8 @@ export default function App() {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <View style={styles.container}>
           <MrPullRefresh
-            onPulldownRefresh={downLoader}
-            onPullupRefresh={upLoader}
-            style={{ width: '100%' }}
+            onPulldownRefresh={pulldownLoader}
+            onPullupRefresh={pullupLoader}
           >
             {/* <Animated.FlatList
               data={[]}
@@ -46,15 +45,7 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
+    position: 'relative',
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    // backgroundColor: '#ff8080',
-  },
-  box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
   },
 });

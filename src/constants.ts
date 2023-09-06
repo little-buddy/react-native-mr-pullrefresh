@@ -17,7 +17,13 @@ export const iOSpringConfig = {
   overshootClamping: true,
 };
 
-export const SystemOffset = 5;
+export const SystemOffset = 1;
+
+export const BackFactor = 3;
+
+// true -> dev
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export const LogFlag = false;
 
 export const FnNull = () => {
   /*  */

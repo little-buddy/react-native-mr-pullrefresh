@@ -1,7 +1,9 @@
 //
 import React from 'react';
 import { Dimensions } from 'react-native';
-import Animated from 'react-native-reanimated';
+import Animated, { withSpring } from 'react-native-reanimated';
+
+import { iOSpringConfig } from './constants';
 
 export const delayTime = (time = 1000) =>
   new Promise((resolve: PromiseCallback<unknown>) => {
@@ -32,4 +34,10 @@ export const checkChildren = (children: React.ReactElement<unknown, any>) => {
       Animated.ScrollView、
       Animated.FlatList
     as a Child`);
+};
+
+export const withAnimation = (value: number, callback: () => void) => {
+  'worklet';
+
+  return withSpring(value, iOSpringConfig, finished => finished && callback());
 };
