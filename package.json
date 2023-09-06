@@ -1,6 +1,6 @@
 {
   "name": "react-native-mr-pullrefresh",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "react-native pull refresh on iOS, Android and Web",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -34,7 +34,7 @@
     "release": "release-it --verbose",
     "example": "yarn --cwd example",
     "bootstrap": "yarn example && yarn install",
-    "changelog": ""
+    "changelog": "npx conventional-changelog -p conventionalcommits -i CHANGELOG.md -r 0 -s"
   },
   "keywords": [
     "react-native",
