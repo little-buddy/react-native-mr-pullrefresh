@@ -33,7 +33,8 @@
     "prepack": "bob build",
     "release": "release-it",
     "example": "yarn --cwd example",
-    "bootstrap": "yarn example && yarn install"
+    "bootstrap": "yarn example && yarn install",
+    "changelog": ""
   },
   "keywords": [
     "react-native",
@@ -117,7 +118,9 @@
     },
     "plugins": {
       "@release-it/conventional-changelog": {
-        "preset": "angular"
+        "preset": "angular",
+        "infile": "CHANGELOG.md",
+        "header": "# Changelog"
       }
     }
   },
