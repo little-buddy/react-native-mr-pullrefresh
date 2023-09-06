@@ -1,6 +1,6 @@
 {
   "name": "react-native-mr-pullrefresh",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "react-native pull refresh on iOS, Android and Web",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -52,7 +52,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
-    "@commitlint/config-conventional": "^17.0.2",
+    "@commitlint/config-conventional": "17.0.2",
     "@evilmartians/lefthook": "^1.2.2",
     "@react-native-community/eslint-config": "^3.0.2",
     "@release-it/conventional-changelog": "^5.0.0",
@@ -89,7 +89,7 @@
     "lottie-react-native": "*"
   },
   "engines": {
-    "node": ">= 18.0.0"
+    "node": ">= 16.0.0"
   },
   "packageManager": "^yarn@1.22.15",
   "jest": {
