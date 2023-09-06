@@ -1,6 +1,6 @@
 {
   "name": "react-native-mr-pullrefresh",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "react-native pull refresh on iOS, Android and Web",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
