@@ -31,7 +31,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"src/**/*.{js,ts,tsx}\"",
     "prepack": "bob build",
-    "release": "release-it --ci",
+    "release": "release-it",
+    "release:ci": "release-it --ci",
     "example": "yarn --cwd example",
     "bootstrap": "yarn example && yarn install",
     "changelog": "npx conventional-changelog -p conventionalcommits -i CHANGELOG.md -r 0 -s"
