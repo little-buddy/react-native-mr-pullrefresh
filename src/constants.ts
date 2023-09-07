@@ -17,7 +17,7 @@ export const iOSpringConfig = {
   overshootClamping: true,
 };
 
-export const SystemOffset = 1;
+export const SystemOffset = 5;
 
 export const BackFactor = 3;
 
