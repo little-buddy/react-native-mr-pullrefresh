@@ -1,11 +1,9 @@
 name: CI
+
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+    tags:
+      - "release"
 
 jobs:
   lint:
@@ -35,7 +33,7 @@ jobs:
       - name: Run unit tests
         run: yarn test --maxWorkers=2 --coverage
 
-  build-library:
+  release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -46,6 +44,27 @@ jobs:
 
       - name: Build package
         run: yarn prepack
+
+      - name: Initialize the NPM config
+        run: npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Run release
+        run: npm run release --ci
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish done
+        run: |
+          echo "Publish done"
+
+      - name: 'do remove'
+        run: git tag -d ${{ github.ref_name }}
+
+      - name: 'do push'
+        run: git push origin :${{ github.ref }}
 
   # build-web:
   #   runs-on: ubuntu-latest

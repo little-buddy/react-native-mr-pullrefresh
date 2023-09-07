@@ -29,11 +29,11 @@ module.exports = {
     tagName: 'v${version}',
   },
   npm: {
-    publish: false,
+    publish: true,
   },
   github: {
     release: true,
-    releaseName: 'v${version}',
+    releaseName: 'Release v${version}',
   },
   plugins: {
     '@release-it/conventional-changelog': {
