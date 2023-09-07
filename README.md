@@ -1,5 +1,14 @@
 # react-native-mr-pullrefresh
 
+![NPM](https://badgen.net/npm/v/react-native-mr-pullrefresh)
+![NPM](https://badgen.net/npm/dw/react-native-mr-pullrefresh)
+![MIT](https://badgen.net/static/license/MIT/red)
+![INSTALLED](https://badgen.net/packagephobia/install/react-native-mr-pullrefresh)
+![NODE](https://badgen.net/npm/node/react-native-mr-pullrefresh?color=purple)
+![STARS](https://badgen.net/github/stars/little-buddy/react-native-mr-pullrefresh?color=gray)
+
+![BITCON](https://badgen.net/https/napkin-examples.npkn.net/bitcoin-badge)
+
 react-native pull refresh on iOS, Android and Web
 
 ```
