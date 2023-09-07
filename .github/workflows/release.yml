@@ -50,6 +50,11 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: setup git
+        run: |
+          git config --global user.name "buddy"
+          git config --global user.email "litoubuddy@gmail.com"
+
       - name: Run release
         run: yarn release:ci
         env:
@@ -60,10 +65,7 @@ jobs:
         run: |
           echo "Publish done"
 
-      - name: 'do remove'
-        run: git tag -d ${{ github.ref_name }}
-
-      - name: 'do push'
+      - name: 'remove tag'
         run: git push origin :${{ github.ref }}
 
   # build-web:

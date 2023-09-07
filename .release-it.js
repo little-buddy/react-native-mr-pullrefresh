@@ -33,7 +33,7 @@ module.exports = {
   },
   github: {
     release: true,
-    releaseName: 'Release v${version}',
+    releaseName: 'v${version}',
   },
   plugins: {
     '@release-it/conventional-changelog': {
