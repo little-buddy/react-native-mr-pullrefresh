@@ -32,7 +32,7 @@ module.exports = {
     publish: false,
   },
   github: {
-    release: false,
+    release: true,
   },
   plugins: {
     '@release-it/conventional-changelog': {
