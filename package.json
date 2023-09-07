@@ -31,7 +31,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"src/**/*.{js,ts,tsx}\"",
     "prepack": "bob build",
-    "release": "release-it --verbose",
+    "release": "release-it --ci",
     "example": "yarn --cwd example",
     "bootstrap": "yarn example && yarn install",
     "changelog": "npx conventional-changelog -p conventionalcommits -i CHANGELOG.md -r 0 -s"
@@ -42,7 +42,10 @@
     "android",
     "pull refresh"
   ],
-  "repository": "https://github.com/little-buddy/react-native-mr-pullrefresh.git",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:little-buddy/react-native-mr-pullrefresh.git"
+  },
   "author": "buddy <litoubuddy@gmail.com>",
   "license": "MIT",
   "bugs": {
