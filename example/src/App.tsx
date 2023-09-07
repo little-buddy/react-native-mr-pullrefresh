@@ -9,12 +9,12 @@ export default function App() {
 
   const pulldownLoader = async () => {
     await delayTime(5000);
-    setData(Array(400).fill(0));
+    setData(Array(200).fill(0));
   };
 
   const pullupLoader = async () => {
     await delayTime(5000);
-    setData(Array(300).fill(0));
+    setData(Array(300).fill(1));
   };
 
   return (
@@ -32,8 +32,12 @@ export default function App() {
             /> */}
 
             <Animated.ScrollView style={{ flex: 1, backgroundColor: 'yellow' }}>
-              {data.map((_, index) => (
-                <Text key={index}>Result: {index} </Text>
+              {data.map((flag, index) => (
+                <View style={styles.text} key={index}>
+                  <Text>
+                    Result {flag ? 'Down' : 'Up'}: {index}{' '}
+                  </Text>
+                </View>
               ))}
             </Animated.ScrollView>
           </MrPullRefresh>
@@ -47,5 +51,10 @@ const styles = StyleSheet.create({
   container: {
     position: 'relative',
     flex: 1,
+  },
+  text: {
+    width: '100%',
+    paddingVertical: 8,
+    alignItems: 'center',
   },
 });

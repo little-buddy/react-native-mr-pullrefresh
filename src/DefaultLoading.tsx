@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     bottom: 0,
+    height: 100,
   },
   ml8: {
     marginLeft: 8,

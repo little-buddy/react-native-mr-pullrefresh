@@ -76,11 +76,15 @@ export const usePullupLoadingAnimation = () => {
   return useAnimatedStyle(() => ({
     height: pullupHeight,
     opacity: interpolate(-panTranslateY.value, [0, pullupHeight], [0, 1]),
-    translateY: interpolate(
-      -panTranslateY.value,
-      [0, pullupHeight],
-      [pullupHeight, 0],
-      Extrapolate.CLAMP
-    ),
+    transform: [
+      {
+        translateY: interpolate(
+          -panTranslateY.value,
+          [0, pullupHeight],
+          [pullupHeight, 0],
+          Extrapolate.CLAMP
+        ),
+      },
+    ],
   }));
 };
