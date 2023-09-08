@@ -9,7 +9,7 @@ export default function App() {
 
   const pulldownLoader = async () => {
     await delayTime(5000);
-    // setData(Array(200).fill(0));
+    setData(Array(200).fill(0));
   };
 
   const pullupLoader = async () => {
@@ -35,7 +35,7 @@ export default function App() {
               {data.map((flag, index) => (
                 <View style={styles.text} key={index}>
                   <Text>
-                    Result {flag ? 'Down' : 'Up'}: {index}{' '}
+                    Result {flag ? 'Up' : 'down'}: {index}
                   </Text>
                 </View>
               ))}

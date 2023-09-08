@@ -39,7 +39,6 @@ interface MrRefreshWrapperProps {
   enablePullup?: boolean;
   style?: ViewStyle;
 }
-// FIXME: 说白了就是 Android Scroll 没办法刷新处理优化
 
 const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
   onPulldownRefresh = FnNull,
@@ -101,12 +100,10 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
     () => scrollerOffsetY.value <= SystemOffset
   );
 
-  // TODO: whether need Math.floor
   const canPullup = useDerivedValue(
     () =>
-      Math.floor(
-        Math.abs(scrollerOffsetY.value - (contentY.value - containerY.value))
-      ) >= 0 && enablePullup,
+      scrollerOffsetY.value - (contentY.value - containerY.value) >=
+        -SystemOffset && enablePullup,
     [enablePullup]
   );
 
@@ -215,11 +212,6 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
         }
       }
 
-      // FIXME: Android快速下滑，会导致canPullup 直接判断为false，而实际应该是 true
-      //        可能是因为安卓的原始特性会让它突然增加 content 的高度，也有可能是 scroll滑动过快导致 onScroll触发不及时
-      //        导致释放的释放判断异常
-      //        Anrdoid 上拉不存在这个问题
-      //        iOS 直接就是不频发触发更新，导致 scrollOffsetY 没有获取到即时值
       if (canPullup.value) {
         if (pullupState.value !== PullingRefreshStatus.IDLE) {
           pullupState.value =
@@ -229,7 +221,6 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
 
           if (pullupState.value === PullingRefreshStatus.BACKUP) {
             panTranslateY.value = withAnimation(0, () => {
-              console.log('pull up back to 0');
               pullupState.value = PullingRefreshStatus.IDLE;
             });
           }
@@ -258,8 +249,8 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
     }
 
     return {
-      pointerEvents: [pulldownState.value, pullupState.value].includes(
-        PullingRefreshStatus.LOADING
+      pointerEvents: ![pulldownState.value, pullupState.value].includes(
+        PullingRefreshStatus.IDLE
       )
         ? 'none'
         : 'auto',
@@ -284,15 +275,15 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
         : 'auto',
   }));
 
-  // TODO:
-  //      not do realtime.
-  //      This hook will only trigger onScroll when the hand leave
+  // FIXME:
+  //      [Android] scroll down fast, will not fire onScroll realtime.
+  //                I think it can set velocity to fixed it.
   const onScroll = useAnimatedScrollHandler({
     onScroll: (event: NativeScrollEvent) => {
-      const y = event.contentOffset.y;
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions, no-console, @typescript-eslint/no-unnecessary-condition
-      LogFlag && console.log('123123', event.contentOffset, event.contentInset);
-      scrollerOffsetY.value = y;
+      scrollerOffsetY.value = event.contentOffset.y;
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions, @typescript-eslint/no-unnecessary-condition, no-console
+      LogFlag && console.log('onScroll', event.contentOffset);
 
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore

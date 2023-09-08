@@ -18,9 +18,6 @@ export const iOSpringConfig = {
 
 export const SystemOffset = 1;
 
-export const BackFactor = 3;
-
-export const CheckBackFactor = 3;
 // true -> dev
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const LogFlag = false;
