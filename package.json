@@ -35,7 +35,8 @@
     "release:ci": "release-it --ci",
     "example": "yarn --cwd example",
     "bootstrap": "yarn example && yarn install",
-    "changelog": "npx conventional-changelog -p conventionalcommits -i CHANGELOG.md -r 0 -s"
+    "changelog": "npx conventional-changelog -p conventionalcommits -i CHANGELOG.md -r 0 -s",
+    "git:release": "git tag release && git push origin tag release && git tag -d release && git push origin :refs/tags/release"
   },
   "keywords": [
     "react-native",
