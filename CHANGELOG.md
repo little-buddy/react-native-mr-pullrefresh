@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.1](https://github.com/little-buddy/react-native-mr-pullrefresh/compare/v0.1.0...v0.1.1) (2023-09-08)
+
+
+### 🐛 Bug Fixes
+
+* ios pullrefresh bug ([801b8a9](https://github.com/little-buddy/react-native-mr-pullrefresh/commit/801b8a9a67618532f01e63ff00e3e9d766a39295))
+* iOS pulluploading translateY not work ([986182b](https://github.com/little-buddy/react-native-mr-pullrefresh/commit/986182b13b9d77ad91c5379be9cf47ef08bd5fe9))
+* scroll will trigger panGesture when loading ([012ae3a](https://github.com/little-buddy/react-native-mr-pullrefresh/commit/012ae3a652c4d5f57a2bd14c2a834e538cd400fe))
+* set scrollEventThrottle = 16 solved onScroll not fired. ([9caaefc](https://github.com/little-buddy/react-native-mr-pullrefresh/commit/9caaefc6e2069ff74b3c9ac2232fbcc3603df57f))
+
 ## 0.1.0 (2023-09-07)
 
 
