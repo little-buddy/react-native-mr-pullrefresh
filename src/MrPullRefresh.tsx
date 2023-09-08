@@ -18,7 +18,6 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import {
-  BackFactor,
   FnNull,
   LogFlag,
   PullingRefreshStatus,
@@ -27,12 +26,7 @@ import {
 import { MrPullRefreshContext } from './context';
 import { PullupLoading } from './DefaultLoading';
 import { HeroLottie } from './LottieLoading';
-import {
-  checkChildren,
-  getWindowHeight,
-  isPromise,
-  withAnimation,
-} from './utils';
+import { actuallyMove, checkChildren, isPromise, withAnimation } from './utils';
 interface MrRefreshWrapperProps {
   onPulldownRefresh?: () => void | Promise<unknown>;
   onPullupRefresh?: () => void | Promise<unknown>;
@@ -40,6 +34,8 @@ interface MrRefreshWrapperProps {
   pullupHeight?: number;
   pulldownLoading?: JSX.Element;
   pullupLoading?: JSX.Element;
+  containerFactor?: number;
+  pullingFactor?: number;
   enablePullup?: boolean;
   style?: ViewStyle;
 }
@@ -47,17 +43,16 @@ interface MrRefreshWrapperProps {
 const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
   onPulldownRefresh = FnNull,
   onPullupRefresh = FnNull,
-  pulldownHeight = 140,
+  pulldownHeight = 80,
   pullupHeight = 100,
   pulldownLoading = <HeroLottie />,
   pullupLoading = <PullupLoading />,
+  containerFactor = 0.5,
+  pullingFactor = 3,
   enablePullup = true /* TODO: will re-render */,
   style,
   children,
 }) => {
-  // TODO: will check it.
-  const windowHeight = getWindowHeight();
-
   // custom
   const pulldownState = useSharedValue<PullingRefreshStatus>(
     PullingRefreshStatus.IDLE
@@ -144,7 +139,8 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
           pullupState.value = PullingRefreshStatus.IDLE;
         } else {
           pullupState.value =
-            -event.translationY > pullupHeight
+            actuallyMove(-event.translationY, containerY.value) >
+            pullupHeight * pullingFactor
               ? PullingRefreshStatus.PULLINGGO
               : PullingRefreshStatus.PULLING;
         }
@@ -153,7 +149,8 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
       if (canPulldown.value) {
         if (event.translationY >= 0) {
           pulldownState.value =
-            event.translationY > pulldownHeight
+            actuallyMove(event.translationY, containerY.value) >
+            pulldownHeight * pullingFactor
               ? PullingRefreshStatus.PULLINGGO
               : PullingRefreshStatus.PULLING;
         } else {
@@ -197,7 +194,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
       if (canPulldown.value) {
         if (pulldownState.value !== PullingRefreshStatus.IDLE) {
           pulldownState.value =
-            panTranslateY.value >= pulldownHeight
+            panTranslateY.value >= pulldownHeight * pullingFactor
               ? PullingRefreshStatus.PULLINGBACK
               : PullingRefreshStatus.BACKUP;
 
@@ -219,7 +216,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
       if (canPullup.value) {
         if (pullupState.value !== PullingRefreshStatus.IDLE) {
           pullupState.value =
-            -panTranslateY.value >= pullupHeight
+            -panTranslateY.value >= pullupHeight * pullingFactor
               ? PullingRefreshStatus.PULLINGBACK
               : PullingRefreshStatus.BACKUP;
 
@@ -244,12 +241,12 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
 
   const contentAnimation = useAnimatedStyle(() => {
     const isPulldown = pulldownState.value !== PullingRefreshStatus.IDLE;
-    let input = [0, pulldownHeight, windowHeight];
-    let output = [0, pulldownHeight, pulldownHeight * BackFactor];
+    let input = [0, pulldownHeight, containerY.value];
+    let output = [0, pulldownHeight, containerY.value * containerFactor];
 
     if (!isPulldown) {
-      input = [-windowHeight, -pullupHeight, 0];
-      output = [-pullupHeight * BackFactor, -pullupHeight, 0];
+      input = [-containerY.value, -pullupHeight, 0];
+      output = [-containerY.value * containerFactor, -pullupHeight, 0];
     }
 
     return {
@@ -326,6 +323,8 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
         containerY,
         pulldownHeight,
         pullupHeight,
+        pullingFactor,
+        containerFactor,
       }}
     >
       <View style={[styles.flex, styles.overhidden, style]}>

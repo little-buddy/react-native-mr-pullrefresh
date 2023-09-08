@@ -12,6 +12,7 @@ import heroJson from './assets/hero.json';
 // import heroLottie from './assets/hero.lottie';
 import { PullingRefreshStatus } from './constants';
 import { useMrPullRefreshValue, useOnPulldownState } from './hooks';
+import { actuallyMove } from './utils';
 const AnimatedLottieView = Animated.createAnimatedComponent(LottieView);
 
 export const HeroLottie = () => {
@@ -19,15 +20,16 @@ export const HeroLottie = () => {
 
   const ctx = useMrPullRefreshValue();
 
-  const { pulldownHeight, panTranslateY, pulldownState } = ctx;
+  const {
+    pulldownHeight,
+    panTranslateY,
+    pulldownState,
+    containerY,
+    pullingFactor,
+  } = ctx;
 
   const animatedStyle = useAnimatedStyle(() => ({
-    height: interpolate(
-      panTranslateY.value,
-      [0, pulldownHeight],
-      [pulldownHeight * 0.2, pulldownHeight],
-      Extrapolate.CLAMP
-    ),
+    height: Math.min(panTranslateY.value, pulldownHeight),
     opacity: interpolate(panTranslateY.value, [0, pulldownHeight], [0, 1]),
   }));
 
@@ -46,8 +48,8 @@ export const HeroLottie = () => {
       pulldownState.value
     )
       ? interpolate(
-          panTranslateY.value,
-          [0, pulldownHeight],
+          actuallyMove(panTranslateY.value, containerY.value),
+          [0, pulldownHeight * pullingFactor],
           [0, 1],
           Extrapolate.CLAMP
         )

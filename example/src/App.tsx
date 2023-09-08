@@ -9,7 +9,7 @@ export default function App() {
 
   const pulldownLoader = async () => {
     await delayTime(5000);
-    setData(Array(200).fill(0));
+    // setData(Array(200).fill(0));
   };
 
   const pullupLoader = async () => {

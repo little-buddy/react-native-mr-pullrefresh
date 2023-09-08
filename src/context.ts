@@ -13,6 +13,8 @@ type MrPullRefreshContextValue = {
   containerY: SharedValue<number>;
   pulldownHeight: number;
   pullupHeight: number;
+  pullingFactor: number;
+  containerFactor: number;
 };
 
 export const MrPullRefreshContext =

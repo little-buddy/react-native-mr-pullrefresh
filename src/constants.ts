@@ -1,5 +1,3 @@
-//
-
 export enum PullingRefreshStatus {
   IDLE,
   PULLING,
@@ -10,17 +8,19 @@ export enum PullingRefreshStatus {
 }
 
 export const iOSpringConfig = {
-  velocity: 8,
+  velocity: 0,
   mass: 1,
-  damping: 15,
-  stiffness: 100,
+  damping: 27,
+  stiffness: 300,
   overshootClamping: true,
+  // duration: 600,
 };
 
-export const SystemOffset = 5;
+export const SystemOffset = 1;
 
 export const BackFactor = 3;
 
+export const CheckBackFactor = 3;
 // true -> dev
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const LogFlag = false;

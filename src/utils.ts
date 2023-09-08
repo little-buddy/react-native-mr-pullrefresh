@@ -1,7 +1,7 @@
 //
 import React from 'react';
 import { Dimensions } from 'react-native';
-import Animated, { withSpring } from 'react-native-reanimated';
+import Animated, { interpolate, withSpring } from 'react-native-reanimated';
 
 import { iOSpringConfig } from './constants';
 
@@ -36,8 +36,18 @@ export const checkChildren = (children: React.ReactElement<unknown, any>) => {
     as a Child`);
 };
 
-export const withAnimation = (value: number, callback: () => void) => {
+export const withAnimation = (value: number, callback?: () => void) => {
   'worklet';
 
-  return withSpring(value, iOSpringConfig, finished => finished && callback());
+  return withSpring(
+    value,
+    iOSpringConfig,
+    finished => finished && callback && callback()
+  );
+};
+
+export const actuallyMove = (move: number, toMove: number) => {
+  'worklet';
+
+  return interpolate(move, [0, toMove], [0, toMove]);
 };
