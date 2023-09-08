@@ -48,7 +48,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
   pulldownLoading = <HeroLottie />,
   pullupLoading = <PullupLoading />,
   containerFactor = 0.5,
-  pullingFactor = 3,
+  pullingFactor = 2.2,
   enablePullup = true /* TODO: will re-render */,
   style,
   children,
@@ -278,21 +278,19 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
   // FIXME:
   //      [Android] scroll down fast, will not fire onScroll realtime.
   //                I think it can set velocity to fixed it.
-  const onScroll = useAnimatedScrollHandler({
-    onScroll: (event: NativeScrollEvent) => {
-      scrollerOffsetY.value = event.contentOffset.y;
+  const onScroll = useAnimatedScrollHandler((event: NativeScrollEvent) => {
+    scrollerOffsetY.value = event.contentOffset.y;
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions, @typescript-eslint/no-unnecessary-condition, no-console
-      LogFlag && console.log('onScroll', event.contentOffset);
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions, @typescript-eslint/no-unnecessary-condition, no-console
+    LogFlag && console.log('onScroll', event.contentOffset);
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    if (children.onScroll) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      if (children.onScroll) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        runOnJS(children.onScroll)(event);
-      }
-    },
+      runOnJS(children.onScroll)(event);
+    }
   });
 
   const onLayout = useCallback(

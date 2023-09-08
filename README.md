@@ -73,7 +73,7 @@ import { MrPullRefresh } from 'react-native-mr-pullrefresh';
 | pulldownHeight    | Number    | The height of the drop-down load component is defined, and the judgment of the drop-down state depends on this value | 140      |
 | pullupHeight      | Number    | The height of the pull-up component is defined, and the pull-up state is determined by this value | 100      |
 | containerFactor   | Number    | The container factor is used to adjust the height of the refresh judgment | 0.5      |
-| pullingFactor     | Number    | Determine the coefficient of pulling state length            | 3        |
+| pullingFactor     | Number    | Determine the coefficient of pulling state length            | 2.2        |
 | enablePullup      | Boolean   | whether show pullingupLoading                                | false    |
 | pulldownLoading   | Component | You can custom the Component                                 |          |
 | pullupLoading     | Component | You can custom the Component                                 |          |
