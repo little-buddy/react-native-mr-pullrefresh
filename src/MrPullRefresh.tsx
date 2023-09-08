@@ -249,11 +249,11 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
     }
 
     return {
-      pointerEvents: ![pulldownState.value, pullupState.value].includes(
-        PullingRefreshStatus.IDLE
-      )
-        ? 'none'
-        : 'auto',
+      pointerEvents:
+        pullupState.value !== PullingRefreshStatus.IDLE ||
+        pulldownState.value !== PullingRefreshStatus.IDLE
+          ? 'none'
+          : 'auto',
       transform: [
         {
           translateY: interpolate(
@@ -266,14 +266,6 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
       ],
     };
   });
-
-  const childrenWrapperStyle = useAnimatedStyle(() => ({
-    pointerEvents:
-      pullupState.value !== PullingRefreshStatus.IDLE ||
-      pulldownState.value !== PullingRefreshStatus.IDLE
-        ? 'none'
-        : 'auto',
-  }));
 
   // FIXME:
   //      [Android] scroll down fast, will not fire onScroll realtime.
@@ -348,7 +340,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
                   bounces: false,
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
-                  style: [children?.props?.style, childrenWrapperStyle],
+                  style: [children?.props?.style],
                   scrollEventThrottle: 16,
                 }
               )}
