@@ -5,6 +5,7 @@ import type {
   ViewStyle,
 } from 'react-native';
 import { StyleSheet, View } from 'react-native';
+import { Platform } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   Extrapolate,
@@ -267,6 +268,14 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
     };
   });
 
+  const childrenWrapperStyle = useAnimatedStyle(() => ({
+    pointerEvents:
+      pullupState.value !== PullingRefreshStatus.IDLE ||
+      pulldownState.value !== PullingRefreshStatus.IDLE
+        ? 'none'
+        : 'auto',
+  }));
+
   // FIXME:
   //      [Android] scroll down fast, will not fire onScroll realtime.
   //                I think it can set velocity to fixed it.
@@ -307,6 +316,14 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
     [contentY, children]
   );
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const childStyle = [children?.props?.style];
+
+  if (Platform.OS === 'android') {
+    childStyle.push(childrenWrapperStyle);
+  }
+
   return (
     <MrPullRefreshContext.Provider
       value={{
@@ -340,7 +357,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
                   bounces: false,
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
-                  style: [children?.props?.style],
+                  style: childStyle,
                   scrollEventThrottle: 16,
                 }
               )}
