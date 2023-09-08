@@ -7,9 +7,6 @@
 ![NODE](https://badgen.net/npm/node/react-native-mr-pullrefresh?color=purple)
 ![STARS](https://badgen.net/github/stars/little-buddy/react-native-mr-pullrefresh?color=gray)
 
-![BITCON](https://badgen.net/https/napkin-examples.npkn.net/bitcoin-badge)
-
-react-native pull refresh on iOS, Android and Web
 
 ```
 
@@ -19,6 +16,8 @@ react-native pull refresh on iOS, Android and Web
 \/    \/_|    (_) \/     \__,_|_|_\/ \_/\___|_| |_|  \___||___/_| |_|
 
 ```
+
+react-native pull refresh on iOS, Android and Web
 
 ## ⚠️ Warning
 `react-native-mr-pullrefresh` Only support wrapper `Animated.ScrollView` and `Animated.FlatList`
@@ -69,18 +68,18 @@ import { MrPullRefresh } from 'react-native-mr-pullrefresh';
 <img src="./gifs/ddd.gif" alt="ios-example" width="240">
 
 ## Props
-| props           | description |
-| --------------- | ----------- |
-| pulldownHeight  |             |
-| pullupHeight    |             |
-| enablePullup    |             |
-| pulldownLoading | Component   |
-| pullupLoading   | Component   |
-
-| event             | description |
-| ----------------- | ----------- |
-| onPulldownRefresh |             |
-| onPullupRefresh   |             |
+| props             | type      | description                                                  | Default  |
+| ----------------- | --------- | ------------------------------------------------------------ | -------- |
+| pulldownHeight    | Number    | The height of the drop-down load component is defined, and the judgment of the drop-down state depends on this value | 140      |
+| pullupHeight      | Number    | The height of the pull-up component is defined, and the pull-up state is determined by this value | 100      |
+| containerFactor   | Number    | The container factor is used to adjust the height of the refresh judgment | 0.5      |
+| pullingFactor     | Number    | Determine the coefficient of pulling state length            | 3        |
+| enablePullup      | Boolean   | whether show pullingupLoading                                | false    |
+| pulldownLoading   | Component | You can custom the Component                                 |          |
+| pullupLoading     | Component | You can custom the Component                                 |          |
+|                   |           |                                                              |          |
+| onPulldownRefresh | Function  | callback of pulling down refresh, load data with it          | ()=>void |
+| onPullupRefresh   | Function  | callback of pulling up refresh, load data with it            | ()=>void |
 
 
 ## Contributing
