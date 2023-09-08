@@ -19,11 +19,6 @@
 
 react-native pull refresh on iOS, Android and Web
 
-## ⚠️ Warning
-`react-native-mr-pullrefresh` Only support wrapper `Animated.ScrollView` and `Animated.FlatList`
-
-not support nested MrPullRefresh!
-
 ## 💪🏻 Support
 | Platform |             |
 | -------- | ----------- |
@@ -31,8 +26,21 @@ not support nested MrPullRefresh!
 | Android  | ✅ |
 | Web      | Soon...     |
 
+| Library |             |
+| -------- | ----------- |
+| react-native-gesture-handler      | 2.x           |
+| react-native-reanimated  | 3.x |
+| lottie-react-native | 6.x |
+#### ⚠️ Warning
+`react-native-mr-pullrefresh` Only support wrapper `Animated.ScrollView` and `Animated.FlatList`
+
+not support nested MrPullRefresh!
 
 ## Installation
+
+```sh
+yarn install react-native-gesture-hanlder react-native-reanimated lottie-react-native
+```
 
 ```sh
 yarn install react-native-mr-pullrefresh
