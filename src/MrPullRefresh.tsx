@@ -39,6 +39,7 @@ interface MrRefreshWrapperProps {
   enablePullup?: boolean;
   style?: ViewStyle;
 }
+// FIXME: 说白了就是 Android Scroll 没办法刷新处理优化
 
 const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
   onPulldownRefresh = FnNull,
@@ -103,8 +104,9 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
   // TODO: whether need Math.floor
   const canPullup = useDerivedValue(
     () =>
-      scrollerOffsetY.value - (contentY.value - containerY.value) >= 0 &&
-      enablePullup,
+      Math.floor(
+        Math.abs(scrollerOffsetY.value - (contentY.value - containerY.value))
+      ) >= 0 && enablePullup,
     [enablePullup]
   );
 
@@ -213,6 +215,11 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
         }
       }
 
+      // FIXME: Android快速下滑，会导致canPullup 直接判断为false，而实际应该是 true
+      //        可能是因为安卓的原始特性会让它突然增加 content 的高度，也有可能是 scroll滑动过快导致 onScroll触发不及时
+      //        导致释放的释放判断异常
+      //        Anrdoid 上拉不存在这个问题
+      //        iOS 直接就是不频发触发更新，导致 scrollOffsetY 没有获取到即时值
       if (canPullup.value) {
         if (pullupState.value !== PullingRefreshStatus.IDLE) {
           pullupState.value =
@@ -222,6 +229,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
 
           if (pullupState.value === PullingRefreshStatus.BACKUP) {
             panTranslateY.value = withAnimation(0, () => {
+              console.log('pull up back to 0');
               pullupState.value = PullingRefreshStatus.IDLE;
             });
           }
@@ -276,18 +284,24 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
         : 'auto',
   }));
 
-  const onScroll = useAnimatedScrollHandler((event: NativeScrollEvent) => {
-    const y = event.contentOffset.y;
-    // console.log(event.contentOffset, event.contentInset);
-    scrollerOffsetY.value = y;
+  // TODO:
+  //      not do realtime.
+  //      This hook will only trigger onScroll when the hand leave
+  const onScroll = useAnimatedScrollHandler({
+    onScroll: (event: NativeScrollEvent) => {
+      const y = event.contentOffset.y;
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions, no-console, @typescript-eslint/no-unnecessary-condition
+      LogFlag && console.log('123123', event.contentOffset, event.contentInset);
+      scrollerOffsetY.value = y;
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    if (children.onScroll) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      runOnJS(children.onScroll)(event);
-    }
+      if (children.onScroll) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        runOnJS(children.onScroll)(event);
+      }
+    },
   });
 
   const onLayout = useCallback(
@@ -346,6 +360,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
                   style: [children?.props?.style, childrenWrapperStyle],
+                  scrollEventThrottle: 16,
                 }
               )}
             </GestureDetector>
