@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.0](https://github.com/little-buddy/react-native-mr-pullrefresh/compare/v0.1.1...v0.2.0) (2023-09-09)
+
+
+### 🐛 Bug Fixes
+
+* container can move when loading ([f168eef](https://github.com/little-buddy/react-native-mr-pullrefresh/commit/f168eefd2992019ebacfc24f243ab9265f90854f))
+* when disabled panGesture, scroll will do ([3480685](https://github.com/little-buddy/react-native-mr-pullrefresh/commit/3480685e6a74ab23b08f08d9e55a99dbff1b4fe9))
+
+
+### 🎸 Features
+
+* have to bump version because of publish mistak ([d1bc97f](https://github.com/little-buddy/react-native-mr-pullrefresh/commit/d1bc97f4fdb5359edc04a4c458e250f59e48cf84))
+
 ## [0.1.1](https://github.com/little-buddy/react-native-mr-pullrefresh/compare/v0.1.0...v0.1.1) (2023-09-08)
 
 
