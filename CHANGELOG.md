@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/little-buddy/react-native-mr-pullrefresh/compare/v0.2.1...v0.2.2) (2023-09-09)
+
+
+### ⚡ Performance Improvements
+
+* ⚡️ remove nested gestures ([98b33a8](https://github.com/little-buddy/react-native-mr-pullrefresh/commit/98b33a859f76abf5b01b9e9e3beb03fae8a2cb25))
+
 ## [0.2.1](https://github.com/little-buddy/react-native-mr-pullrefresh/compare/v0.2.0...v0.2.1) (2023-09-09)
 
 
