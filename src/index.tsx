@@ -6,6 +6,5 @@ export {
   useOnPullupState,
 } from './hooks';
 export { InlineLoadMore } from './LoadMore';
-export { HeroLottie } from './LottieLoading';
 export { MrPullRefresh } from './MrPullRefresh';
 export { delayTime } from './utils';

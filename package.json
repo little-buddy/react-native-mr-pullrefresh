@@ -89,7 +89,6 @@
     "@types/react": "17.0.21"
   },
   "peerDependencies": {
-    "lottie-react-native": "*",
     "react": "*",
     "react-native": "*",
     "react-native-gesture-handler": "*",

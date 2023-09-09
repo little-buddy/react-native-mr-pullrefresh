@@ -25,8 +25,7 @@ import {
   SystemOffset,
 } from './constants';
 import { MrPullRefreshContext } from './context';
-import { PullupLoading } from './DefaultLoading';
-import { HeroLottie } from './LottieLoading';
+import { PulldownLoading, PullupLoading } from './DefaultLoading';
 import { actuallyMove, checkChildren, isPromise, withAnimation } from './utils';
 interface MrRefreshWrapperProps {
   onPulldownRefresh?: () => void | Promise<unknown>;
@@ -46,7 +45,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
   onPullupRefresh = FnNull,
   pulldownHeight = 80,
   pullupHeight = 100,
-  pulldownLoading = <HeroLottie />,
+  pulldownLoading = <PulldownLoading />,
   pullupLoading = <PullupLoading />,
   containerFactor = 0.5,
   pullingFactor = 2.2,
