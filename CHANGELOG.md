@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/little-buddy/react-native-mr-pullrefresh/compare/v0.2.0...v0.2.1) (2023-09-09)
+
+
+### ⚡ Performance Improvements
+
+* ⚡️ fix commit word error ([2e245a9](https://github.com/little-buddy/react-native-mr-pullrefresh/commit/2e245a902f61c08e6e416e4f100cee9991a6319c))
+
 ## [0.2.0](https://github.com/little-buddy/react-native-mr-pullrefresh/compare/v0.1.1...v0.2.0) (2023-09-09)
 
 
