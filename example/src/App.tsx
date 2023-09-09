@@ -8,12 +8,12 @@ export default function App() {
   const [data, setData] = React.useState<number[]>([]);
 
   const pulldownLoader = async () => {
-    await delayTime(5000);
+    await delayTime(1500);
     setData(Array(200).fill(0));
   };
 
   const pullupLoader = async () => {
-    await delayTime(5000);
+    await delayTime(1500);
     setData(Array(300).fill(1));
   };
 

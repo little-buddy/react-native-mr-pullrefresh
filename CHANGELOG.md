@@ -11,7 +11,7 @@
 
 ### 🎸 Features
 
-* have to bump version because of publish mistak ([d1bc97f](https://github.com/little-buddy/react-native-mr-pullrefresh/commit/d1bc97f4fdb5359edc04a4c458e250f59e48cf84))
+* have to bump version because of publish mistake ([76c7665](https://github.com/little-buddy/react-native-mr-pullrefresh/commit/76c76650bbb0f981a61a87a8884a0c914279dabe))
 
 ## [0.1.1](https://github.com/little-buddy/react-native-mr-pullrefresh/compare/v0.1.0...v0.1.1) (2023-09-08)
 

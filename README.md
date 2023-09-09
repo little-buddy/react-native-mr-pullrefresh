@@ -77,7 +77,10 @@ import { MrPullRefresh } from 'react-native-mr-pullrefresh';
 ```
 
 ## Example on iOS
-<img src="./gifs/ddd.gif" alt="ios-example" width="240">
+| <img src="./gifs/ios.gif" alt="ios-example" width="240"> |     <img src="./gifs/android.gif" alt="ios-example" width="250">         |
+| :--------: | :-----------: |
+| iOS     |   Android        |
+
 
 ## Props
 | props             | type      | description                                                  | Default  |
