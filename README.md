@@ -19,6 +19,10 @@
 
 react-native pull refresh on iOS, Android and Web
 
+It relies on `react-native-gesture-handler` and `react-native-reanimated`
+
+so please install them before you use this package
+
 ## 💪🏻 Support
 | Platform |             |
 | -------- | ----------- |
