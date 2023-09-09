@@ -5,9 +5,8 @@ import type {
   ViewStyle,
 } from 'react-native';
 import { StyleSheet, View } from 'react-native';
-import { Platform } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, {
+import {
   Extrapolate,
   interpolate,
   runOnJS,
@@ -111,6 +110,14 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
   const panGesture = Gesture.Pan()
     .onStart(event => {
       if (
+        [pulldownState.value, pullupState.value].includes(
+          PullingRefreshStatus.LOADING
+        )
+      ) {
+        return;
+      }
+
+      if (
         canPulldown.value &&
         pulldownState.value === PullingRefreshStatus.IDLE &&
         event.velocityY > 0
@@ -130,6 +137,14 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
       LogFlag && console.log('onStart', pulldownState.value, pullupState.value);
     })
     .onChange(event => {
+      if (
+        [pulldownState.value, pullupState.value].includes(
+          PullingRefreshStatus.LOADING
+        )
+      ) {
+        return;
+      }
+
       if (event.translationY > 0) {
         // down
         if (pullupState.value !== PullingRefreshStatus.IDLE) {
@@ -251,6 +266,13 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
     }
 
     return {
+      /**
+       *    FIXME: #issue 👀
+       *           Pullup to bounce back failed during the quick move down to up
+       *           at the bottom on ios and android simulator.
+       *           However, it works fine on the real device.
+       *           Maybe the simulator cant tracking gestures by mouse normally.
+       *  */
       pointerEvents:
         pullupState.value !== PullingRefreshStatus.IDLE ||
         pulldownState.value !== PullingRefreshStatus.IDLE
@@ -268,21 +290,6 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
       ],
     };
   });
-
-  /**
-   *    FIXME: #issue 👀
-   *           Pullup to bounce back failed during the quick move down to up
-   *           at the bottom on ios and android simulator.
-   *           However, it works fine on the real device.
-   *           Maybe the simulator cant tracking gestures by mouse normally.
-   *  */
-  const childrenWrapperStyle = useAnimatedStyle(() => ({
-    pointerEvents:
-      pullupState.value === PullingRefreshStatus.IDLE &&
-      pulldownState.value === PullingRefreshStatus.IDLE
-        ? 'auto'
-        : 'none',
-  }));
 
   const onScroll = useAnimatedScrollHandler((event: NativeScrollEvent) => {
     scrollerOffsetY.value = event.contentOffset.y;
@@ -318,14 +325,14 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
     },
     [contentY, children]
   );
-
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const childStyle = [children?.props?.style];
-
-  if (Platform.OS === 'android') {
-    childStyle.push(childrenWrapperStyle);
-  }
+  const childStyle = [
+    styles.flex,
+    styles.zTop,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    children?.props?.style,
+    contentAnimation,
+  ];
 
   return (
     <MrPullRefreshContext.Provider
@@ -344,28 +351,19 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
     >
       <View style={[styles.flex, styles.overhidden, style]}>
         {pulldownLoading}
-        <GestureDetector gesture={panGesture}>
-          <Animated.View
-            onLayout={onLayout}
-            style={[styles.flex, styles.zTop, contentAnimation]}
-          >
-            <GestureDetector gesture={Gesture.Simultaneous(panGesture, native)}>
-              {React.cloneElement(
-                checkChildren(children as React.ReactElement),
-                {
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore
-                  onContentSizeChange,
-                  onScroll,
-                  bounces: false,
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore
-                  style: childStyle,
-                  scrollEventThrottle: 16,
-                }
-              )}
-            </GestureDetector>
-          </Animated.View>
+        <GestureDetector gesture={Gesture.Simultaneous(panGesture, native)}>
+          {React.cloneElement(checkChildren(children as React.ReactElement), {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            onContentSizeChange,
+            onScroll,
+            bounces: false,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            style: childStyle,
+            scrollEventThrottle: 16,
+            onLayout,
+          })}
         </GestureDetector>
         {enablePullup && pullupLoading}
       </View>
