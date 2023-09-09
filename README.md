@@ -43,7 +43,7 @@ It relies on `react-native-gesture-handler` and `react-native-reanimated`
 so please install them before you use this package
 
 ```sh
-yarn install react-native-gesture-hanlder react-native-reanimated lottie-react-native
+yarn install react-native-gesture-hanlder react-native-reanimated
 ```
 
 ```sh
@@ -76,7 +76,7 @@ import { MrPullRefresh } from 'react-native-mr-pullrefresh';
 </MrPullRefresh>
 ```
 
-## Example on iOS
+## Example
 | <img src="./gifs/ios.gif" alt="ios-example" width="240"> |     <img src="./gifs/android.gif" alt="ios-example" width="250">         |
 | :--------: | :-----------: |
 | iOS     |   Android        |
