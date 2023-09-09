@@ -67,7 +67,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
 
   // TODO: By ClassComponent ?
   const onPulldownLoading = async () => {
-    const res = onPulldownRefresh();
+    const res = onPulldownRefresh() as unknown;
 
     if (isPromise(res)) {
       await res;
@@ -107,9 +107,6 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
     [enablePullup]
   );
 
-  // TODO: There is time deviation when switching between two elements,
-  //       which makes it difficult to judge the critical condition,
-  //       it looks unusually unstable
   const native = Gesture.Native();
   const panGesture = Gesture.Pan()
     .onStart(event => {
@@ -133,10 +130,28 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
       LogFlag && console.log('onStart', pulldownState.value, pullupState.value);
     })
     .onChange(event => {
-      if (canPullup.value) {
-        if (event.translationY >= 0) {
+      if (event.translationY > 0) {
+        // down
+        if (pullupState.value !== PullingRefreshStatus.IDLE) {
           pullupState.value = PullingRefreshStatus.IDLE;
-        } else {
+        }
+
+        if (canPulldown.value) {
+          pulldownState.value =
+            actuallyMove(event.translationY, containerY.value) >
+            pulldownHeight * pullingFactor
+              ? PullingRefreshStatus.PULLINGGO
+              : PullingRefreshStatus.PULLING;
+        }
+      }
+
+      if (event.translationY < 0) {
+        // up
+        if (pulldownState.value !== PullingRefreshStatus.IDLE) {
+          pulldownState.value = PullingRefreshStatus.IDLE;
+        }
+
+        if (canPullup.value) {
           pullupState.value =
             actuallyMove(-event.translationY, containerY.value) >
             pullupHeight * pullingFactor
@@ -145,19 +160,6 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
         }
       }
 
-      if (canPulldown.value) {
-        if (event.translationY >= 0) {
-          pulldownState.value =
-            actuallyMove(event.translationY, containerY.value) >
-            pulldownHeight * pullingFactor
-              ? PullingRefreshStatus.PULLINGGO
-              : PullingRefreshStatus.PULLING;
-        } else {
-          pulldownState.value = PullingRefreshStatus.IDLE;
-        }
-      }
-
-      // Note: You will find that there is a scrolling correction bias here
       if (
         ([
           PullingRefreshStatus.PULLING,
@@ -267,22 +269,24 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
     };
   });
 
+  /**
+   *    FIXME: #issue 👀
+   *           Pullup to bounce back failed during the quick move down to up
+   *           at the bottom on ios and android simulator.
+   *           However, it works fine on the real device.
+   *           Maybe the simulator cant tracking gestures by mouse normally.
+   *  */
   const childrenWrapperStyle = useAnimatedStyle(() => ({
     pointerEvents:
-      pullupState.value !== PullingRefreshStatus.IDLE ||
-      pulldownState.value !== PullingRefreshStatus.IDLE
-        ? 'none'
-        : 'auto',
+      pullupState.value === PullingRefreshStatus.IDLE &&
+      pulldownState.value === PullingRefreshStatus.IDLE
+        ? 'auto'
+        : 'none',
   }));
 
-  // FIXME:
-  //      [Android] scroll down fast, will not fire onScroll realtime.
-  //                I think it can set velocity to fixed it.
   const onScroll = useAnimatedScrollHandler((event: NativeScrollEvent) => {
     scrollerOffsetY.value = event.contentOffset.y;
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions, @typescript-eslint/no-unnecessary-condition, no-console
-    LogFlag && console.log('onScroll', event.contentOffset);
+    // LogFlag && console.log('onScroll', event.contentOffset);
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
