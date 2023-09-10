@@ -31,7 +31,14 @@ export default function App() {
               style={{ flex: 1, backgroundColor: 'yellow' }}
             /> */}
 
-            <Animated.ScrollView style={{ flex: 1, backgroundColor: 'yellow' }}>
+            <Animated.ScrollView
+              // FIXME:
+              // Since the web side uses overflow:scroll to trigger scrolling,
+              // So you have no way to solve the browser's bounces effect.
+              // You need to use a custom library replace ScrollView to fix it.
+              bounces={false}
+              style={[{ backgroundColor: 'yellow' }]}
+            >
               {data.map((flag, index) => (
                 <View style={styles.text} key={index}>
                   <Text>

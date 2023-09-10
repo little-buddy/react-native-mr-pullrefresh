@@ -326,7 +326,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
     [contentY, children]
   );
   const childStyle = [
-    styles.flex,
+    StyleSheet.absoluteFill,
     styles.zTop,
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore

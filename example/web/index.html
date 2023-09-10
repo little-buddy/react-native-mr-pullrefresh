@@ -47,7 +47,7 @@
         display: flex;
         /* Allows you to scroll below the viewport; default value is visible */
         overflow-y: auto;
-        overscroll-behavior-y: none;
+        overscroll-behavior-y: contain; /* for Chorme */
         text-rendering: optimizeLegibility;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
@@ -114,8 +114,8 @@
     <!-- The root element for your Expo app. -->
     <div id="root"></div>
 
-    <script>
+    <!-- <script>
       document.body.addEventListener('touchmove', function(event) { event.preventDefault(); }, { passive: false });
-    </script>
+    </script> -->
   </body>
 </html>
