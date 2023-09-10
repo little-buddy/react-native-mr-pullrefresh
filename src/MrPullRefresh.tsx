@@ -63,6 +63,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
   const contentY = useSharedValue(0);
   const scrollerOffsetY = useSharedValue(0);
   const panTranslateY = useSharedValue(0);
+  const recordValue = useSharedValue(0);
 
   // TODO: By ClassComponent ?
   const onPulldownLoading = async () => {
@@ -107,43 +108,18 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
   );
 
   const native = Gesture.Native();
+  // FIXME: 响应有一个延时偏差，本来就很难搞呀
   const panGesture = Gesture.Pan()
-    .onStart(event => {
-      if (
-        [pulldownState.value, pullupState.value].includes(
-          PullingRefreshStatus.LOADING
-        )
-      ) {
-        return;
-      }
-
-      if (
-        canPulldown.value &&
-        pulldownState.value === PullingRefreshStatus.IDLE &&
-        event.velocityY > 0
-      ) {
-        pulldownState.value = PullingRefreshStatus.PULLING;
-      }
-
-      if (
-        canPullup.value &&
-        pullupState.value === PullingRefreshStatus.IDLE &&
-        event.velocityY < 0
-      ) {
-        pullupState.value = PullingRefreshStatus.PULLING;
-      }
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions, @typescript-eslint/no-unnecessary-condition, no-console
-      LogFlag && console.log('onStart', pulldownState.value, pullupState.value);
-    })
     .onChange(event => {
+      // when loading do nothing.
       if (
-        [pulldownState.value, pullupState.value].includes(
-          PullingRefreshStatus.LOADING
-        )
+        pulldownState.value === PullingRefreshStatus.LOADING ||
+        pullupState.value === PullingRefreshStatus.LOADING
       ) {
         return;
       }
+
+      // FIXME: release switch has an issue.
 
       if (event.translationY > 0) {
         // down
@@ -152,11 +128,19 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
         }
 
         if (canPulldown.value) {
-          pulldownState.value =
+          const newStatus =
             actuallyMove(event.translationY, containerY.value) >
             pulldownHeight * pullingFactor
               ? PullingRefreshStatus.PULLINGGO
               : PullingRefreshStatus.PULLING;
+
+          if (newStatus !== pulldownState.value) {
+            if (pulldownState.value === PullingRefreshStatus.IDLE) {
+              recordValue.value = event.translationY;
+            }
+
+            pulldownState.value = newStatus;
+          }
         }
       }
 
@@ -167,11 +151,19 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
         }
 
         if (canPullup.value) {
-          pullupState.value =
+          const newStatus =
             actuallyMove(-event.translationY, containerY.value) >
             pullupHeight * pullingFactor
               ? PullingRefreshStatus.PULLINGGO
               : PullingRefreshStatus.PULLING;
+
+          if (newStatus !== pullupState.value) {
+            if (pullupState.value === PullingRefreshStatus.IDLE) {
+              recordValue.value = event.translationY;
+            }
+
+            pullupState.value = newStatus;
+          }
         }
       }
 
@@ -187,7 +179,15 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
         ].includes(pullupState.value) &&
           canPullup.value)
       ) {
-        panTranslateY.value = event.translationY;
+        // eslint-disable-next-line no-console
+        console.log(
+          Date.now(),
+          pulldownState.value,
+          pullupState.value,
+          event.translationY,
+          canPullup.value
+        );
+        panTranslateY.value = event.translationY - recordValue.value;
       }
 
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions, @typescript-eslint/no-unnecessary-condition
@@ -292,6 +292,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
   });
 
   const onScroll = useAnimatedScrollHandler((event: NativeScrollEvent) => {
+    // FIXME: 下拉刷新是一定依赖这个数据值的，不然你无法处理的
     scrollerOffsetY.value = event.contentOffset.y;
     // LogFlag && console.log('onScroll', event.contentOffset);
 
