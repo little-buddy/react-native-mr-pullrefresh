@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/little-buddy/react-native-mr-pullrefresh/compare/v0.2.2...v0.2.3) (2023-09-11)
+
+
+### 🐛 Bug Fixes
+
+* when scroll back to top or bottom, loading position issue ([62fc8bc](https://github.com/little-buddy/react-native-mr-pullrefresh/commit/62fc8bc44fc60cd51005585236a9c0b222332c7d))
+
 ## [0.2.2](https://github.com/little-buddy/react-native-mr-pullrefresh/compare/v0.2.1...v0.2.2) (2023-09-09)
 
 
