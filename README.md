@@ -60,7 +60,9 @@ import { MrPullRefresh } from 'react-native-mr-pullrefresh';
  <MrPullRefresh
   onPulldownRefresh={downLoader}
   onPullupRefresh={upLoader}
-  style={{ flex: 1 }}
+  pulldownHeight={80}
+  pullupHeight={100}
+  enablePullup
 >
 
   <Animated.FlatList
