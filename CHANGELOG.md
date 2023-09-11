@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.4](https://github.com/little-buddy/react-native-mr-pullrefresh/compare/v0.2.3...v0.2.4) (2023-09-11)
+
+
+### 🐛 Bug Fixes
+
+* bottom fast move, loading position error ([9de6249](https://github.com/little-buddy/react-native-mr-pullrefresh/commit/9de62499234117370a9e45499aeb93729ddbc2b0))
+
 ## [0.2.3](https://github.com/little-buddy/react-native-mr-pullrefresh/compare/v0.2.2...v0.2.3) (2023-09-11)
 
 
