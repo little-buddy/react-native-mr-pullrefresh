@@ -63,6 +63,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
   const scrollerOffsetY = useSharedValue(0);
   const panTranslateY = useSharedValue(0);
   const recordValue = useSharedValue(0);
+  const lockIDLE = useSharedValue(0);
 
   // TODO: By ClassComponent ?
   const onPulldownLoading = async () => {
@@ -141,6 +142,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
       // pull down
       if (event.translationY > 0) {
         if (pullupState.value !== PullingRefreshStatus.IDLE) {
+          lockIDLE.value = 1;
           pullupState.value = PullingRefreshStatus.IDLE;
         }
 
@@ -157,6 +159,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
             }
 
             pulldownState.value = newStatus;
+            lockIDLE.value = 0;
           }
 
           panTranslateY.value = event.translationY - recordValue.value;
@@ -167,8 +170,15 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
       if (event.translationY < 0) {
         // up
         if (pulldownState.value !== PullingRefreshStatus.IDLE) {
+          lockIDLE.value = 1;
           pulldownState.value = PullingRefreshStatus.IDLE;
         }
+
+        console.log(
+          'onChangeBottom',
+          scrollerOffsetY.value >=
+            contentY.value - containerY.value - SystemOffset
+        );
 
         if (
           scrollerOffsetY.value >=
@@ -186,11 +196,14 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
             }
 
             pullupState.value = newStatus;
+            lockIDLE.value = 0;
           }
 
           panTranslateY.value = event.translationY - recordValue.value;
         }
       }
+
+      // FIXME: when fast move, need recheck it
 
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions, @typescript-eslint/no-unnecessary-condition
       LogFlag &&
@@ -217,6 +230,11 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
         return;
       }
 
+      console.log(
+        scrollerOffsetY.value >=
+          contentY.value - containerY.value - SystemOffset
+      );
+
       if (scrollerOffsetY.value <= SystemOffset) {
         if (pulldownState.value !== PullingRefreshStatus.IDLE) {
           pulldownState.value =
@@ -237,10 +255,14 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
             });
           }
         }
-      } else if (
+      }
+
+      if (
         scrollerOffsetY.value >=
         contentY.value - containerY.value - SystemOffset
       ) {
+        console.log('pullupState', pullupState.value);
+
         if (pullupState.value !== PullingRefreshStatus.IDLE) {
           pullupState.value =
             -panTranslateY.value >= pullupHeight * pullingFactor
@@ -260,7 +282,13 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
             });
           }
         }
-      } else {
+      }
+
+      if (
+        scrollerOffsetY.value >= SystemOffset &&
+        scrollerOffsetY.value >=
+          contentY.value - containerY.value - SystemOffset
+      ) {
         if (pulldownState.value !== PullingRefreshStatus.IDLE) {
           pulldownState.value = PullingRefreshStatus.IDLE;
         }
@@ -306,7 +334,8 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
        *  */
       pointerEvents:
         pullupState.value !== PullingRefreshStatus.IDLE ||
-        pulldownState.value !== PullingRefreshStatus.IDLE
+        pulldownState.value !== PullingRefreshStatus.IDLE ||
+        lockIDLE.value
           ? 'none'
           : 'auto',
       transform: [
