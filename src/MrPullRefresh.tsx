@@ -13,7 +13,6 @@ import {
   runOnUI,
   useAnimatedScrollHandler,
   useAnimatedStyle,
-  useDerivedValue,
   useSharedValue,
 } from 'react-native-reanimated';
 
@@ -96,38 +95,56 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
     })();
   };
 
-  const canPulldown = useDerivedValue(
-    () => scrollerOffsetY.value <= SystemOffset
-  );
-
-  const canPullup = useDerivedValue(
-    () =>
-      scrollerOffsetY.value - (contentY.value - containerY.value) >=
-        -SystemOffset && enablePullup,
-    [enablePullup]
-  );
-
   const native = Gesture.Native();
   // FIXME: 响应有一个延时偏差，本来就很难搞呀
   const panGesture = Gesture.Pan()
-    .onChange(event => {
-      // when loading do nothing.
+    .onStart(event => {
+      // FIXME: Check Pull Status.
       if (
-        pulldownState.value === PullingRefreshStatus.LOADING ||
-        pullupState.value === PullingRefreshStatus.LOADING
+        pulldownState.value >= PullingRefreshStatus.PULLINGBACK ||
+        pullupState.value >= PullingRefreshStatus.PULLINGBACK
       ) {
         return;
       }
 
-      // FIXME: release switch has an issue.
+      if (
+        scrollerOffsetY.value <= SystemOffset &&
+        pulldownState.value === PullingRefreshStatus.IDLE &&
+        event.translationY > 0
+      ) {
+        pulldownState.value = PullingRefreshStatus.PULLING;
+        recordValue.value = event.translationY;
+      }
 
+      if (
+        scrollerOffsetY.value <=
+          contentY.value - containerY.value - SystemOffset &&
+        pullupState.value === PullingRefreshStatus.IDLE &&
+        event.translationY < 0
+      ) {
+        pullupState.value = PullingRefreshStatus.PULLING;
+        recordValue.value = event.translationY;
+      }
+
+      // eslint-disable-next-line no-console, @typescript-eslint/no-unused-expressions, @typescript-eslint/no-unnecessary-condition
+      LogFlag && console.log('onStart', pulldownState.value, pullupState.value);
+    })
+    .onChange(event => {
+      // when loading do nothing.
+      if (
+        pulldownState.value >= PullingRefreshStatus.PULLINGBACK ||
+        pullupState.value >= PullingRefreshStatus.PULLINGBACK
+      ) {
+        return;
+      }
+
+      // pull down
       if (event.translationY > 0) {
-        // down
         if (pullupState.value !== PullingRefreshStatus.IDLE) {
           pullupState.value = PullingRefreshStatus.IDLE;
         }
 
-        if (canPulldown.value) {
+        if (scrollerOffsetY.value <= SystemOffset) {
           const newStatus =
             actuallyMove(event.translationY, containerY.value) >
             pulldownHeight * pullingFactor
@@ -141,16 +158,22 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
 
             pulldownState.value = newStatus;
           }
+
+          panTranslateY.value = event.translationY - recordValue.value;
         }
       }
 
+      // FIXME: release switch has an issue.
       if (event.translationY < 0) {
         // up
         if (pulldownState.value !== PullingRefreshStatus.IDLE) {
           pulldownState.value = PullingRefreshStatus.IDLE;
         }
 
-        if (canPullup.value) {
+        if (
+          scrollerOffsetY.value >=
+          contentY.value - containerY.value - SystemOffset
+        ) {
           const newStatus =
             actuallyMove(-event.translationY, containerY.value) >
             pullupHeight * pullingFactor
@@ -164,36 +187,16 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
 
             pullupState.value = newStatus;
           }
-        }
-      }
 
-      if (
-        ([
-          PullingRefreshStatus.PULLING,
-          PullingRefreshStatus.PULLINGGO,
-        ].includes(pulldownState.value) &&
-          canPulldown.value) ||
-        ([
-          PullingRefreshStatus.PULLING,
-          PullingRefreshStatus.PULLINGGO,
-        ].includes(pullupState.value) &&
-          canPullup.value)
-      ) {
-        // eslint-disable-next-line no-console
-        console.log(
-          Date.now(),
-          pulldownState.value,
-          pullupState.value,
-          event.translationY,
-          canPullup.value
-        );
-        panTranslateY.value = event.translationY - recordValue.value;
+          panTranslateY.value = event.translationY - recordValue.value;
+        }
       }
 
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions, @typescript-eslint/no-unnecessary-condition
       LogFlag &&
         // eslint-disable-next-line no-console
         console.log(
+          'onChange-value',
           scrollerOffsetY.value,
           contentY.value - containerY.value,
           contentY.value,
@@ -207,7 +210,14 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
         console.log('onChange', pulldownState.value, pullupState.value);
     })
     .onEnd(() => {
-      if (canPulldown.value) {
+      if (
+        pulldownState.value >= PullingRefreshStatus.PULLINGBACK ||
+        pullupState.value >= PullingRefreshStatus.PULLINGBACK
+      ) {
+        return;
+      }
+
+      if (scrollerOffsetY.value <= SystemOffset) {
         if (pulldownState.value !== PullingRefreshStatus.IDLE) {
           pulldownState.value =
             panTranslateY.value >= pulldownHeight * pullingFactor
@@ -227,9 +237,10 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
             });
           }
         }
-      }
-
-      if (canPullup.value) {
+      } else if (
+        scrollerOffsetY.value >=
+        contentY.value - containerY.value - SystemOffset
+      ) {
         if (pullupState.value !== PullingRefreshStatus.IDLE) {
           pullupState.value =
             -panTranslateY.value >= pullupHeight * pullingFactor
@@ -249,7 +260,27 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
             });
           }
         }
+      } else {
+        if (pulldownState.value !== PullingRefreshStatus.IDLE) {
+          pulldownState.value = PullingRefreshStatus.IDLE;
+        }
+
+        if (pullupState.value !== PullingRefreshStatus.IDLE) {
+          pullupState.value = PullingRefreshStatus.IDLE;
+        }
       }
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions, @typescript-eslint/no-unnecessary-condition
+      LogFlag &&
+        // eslint-disable-next-line no-console
+        console.log(
+          'onEnd-value',
+          scrollerOffsetY.value,
+          contentY.value - containerY.value,
+          contentY.value,
+          containerY.value,
+          scrollerOffsetY.value - (contentY.value - containerY.value)
+        );
 
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions, @typescript-eslint/no-unnecessary-condition, no-console
       LogFlag && console.log('onEnd', pulldownState.value, pullupState.value);
