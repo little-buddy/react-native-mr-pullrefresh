@@ -2,6 +2,8 @@
 
 ## [0.2.5](https://github.com/little-buddy/react-native-mr-pullrefresh/compare/v0.2.4...v0.2.5) (2023-09-11)
 
+🎸 Because of some mistake, it same as v0.2.4
+
 ## [0.2.4](https://github.com/little-buddy/react-native-mr-pullrefresh/compare/v0.2.3...v0.2.4) (2023-09-11)
 
 
