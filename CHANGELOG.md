@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.6](https://github.com/little-buddy/react-native-mr-pullrefresh/compare/v0.2.5...v0.2.6) (2023-09-13)
+
+
+### 🐛 Bug Fixes
+
+* it will cant scroll when panGesture up in scrolling ([246411c](https://github.com/little-buddy/react-native-mr-pullrefresh/commit/246411c441d043712931823622e226551bc6cfb8))
+* up move fast, will up bottom ([337588f](https://github.com/little-buddy/react-native-mr-pullrefresh/commit/337588f7b1c061bfd250d3e020969a3b9f126677))
+
+
+### ⚡ Performance Improvements
+
+* ⚡️ support web, but cant smooth swith state in web ([10455e4](https://github.com/little-buddy/react-native-mr-pullrefresh/commit/10455e47a038827252bb6ae0f71ddd089a56b1d4))
+
 ## [0.2.5](https://github.com/little-buddy/react-native-mr-pullrefresh/compare/v0.2.4...v0.2.5) (2023-09-11)
 
 🎸 Because of some mistake, it same as v0.2.4
