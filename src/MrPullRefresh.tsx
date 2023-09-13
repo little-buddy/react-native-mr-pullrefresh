@@ -159,7 +159,6 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
             }
 
             pulldownState.value = newStatus;
-            lockIDLE.value = 0;
           }
 
           panTranslateY.value = event.translationY - recordValue.value;
@@ -196,11 +195,14 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
             }
 
             pullupState.value = newStatus;
-            lockIDLE.value = 0;
           }
 
           panTranslateY.value = event.translationY - recordValue.value;
         }
+      }
+
+      if (lockIDLE.value) {
+        lockIDLE.value = 0;
       }
 
       // FIXME: when fast move, need recheck it
@@ -286,7 +288,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
 
       if (
         scrollerOffsetY.value >= SystemOffset &&
-        scrollerOffsetY.value >=
+        scrollerOffsetY.value <=
           contentY.value - containerY.value - SystemOffset
       ) {
         if (pulldownState.value !== PullingRefreshStatus.IDLE) {
