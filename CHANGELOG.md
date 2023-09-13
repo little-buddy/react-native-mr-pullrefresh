@@ -1,5 +1,7 @@
 # Changelog
 
+## [0.2.7](https://github.com/little-buddy/react-native-mr-pullrefresh/compare/v0.2.6...v0.2.7) (2023-09-13)
+
 ## [0.2.6](https://github.com/little-buddy/react-native-mr-pullrefresh/compare/v0.2.5...v0.2.6) (2023-09-13)
 
 
