@@ -20,7 +20,7 @@ export const SystemOffset = 1;
 
 // true -> dev
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export const LogFlag = true;
+export const LogFlag = false;
 
 export const FnNull = () => {
   /*  */

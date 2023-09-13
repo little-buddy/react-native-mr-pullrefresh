@@ -161,7 +161,13 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
             pulldownState.value = newStatus;
           }
 
-          panTranslateY.value = event.translationY - recordValue.value;
+          const move = event.translationY - recordValue.value;
+
+          if (move < 0) {
+            pulldownState.value = PullingRefreshStatus.IDLE;
+          } else {
+            panTranslateY.value = move;
+          }
         }
       }
 
@@ -173,11 +179,14 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
           pulldownState.value = PullingRefreshStatus.IDLE;
         }
 
-        console.log(
-          'onChangeBottom',
-          scrollerOffsetY.value >=
-            contentY.value - containerY.value - SystemOffset
-        );
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions, @typescript-eslint/no-unnecessary-condition
+        LogFlag &&
+          // eslint-disable-next-line no-console
+          console.log(
+            'onChangeBottom',
+            scrollerOffsetY.value >=
+              contentY.value - containerY.value - SystemOffset
+          );
 
         if (
           scrollerOffsetY.value >=
@@ -190,6 +199,7 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
               : PullingRefreshStatus.PULLING;
 
           if (newStatus !== pullupState.value) {
+            // TODO: 个人感觉是这个值记录得有问题
             if (pullupState.value === PullingRefreshStatus.IDLE) {
               recordValue.value = event.translationY;
             }
@@ -197,7 +207,15 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
             pullupState.value = newStatus;
           }
 
-          panTranslateY.value = event.translationY - recordValue.value;
+          console.log('panGesture', recordValue.value);
+
+          const move = event.translationY - recordValue.value;
+
+          if (move > 0) {
+            pullupState.value = PullingRefreshStatus.IDLE;
+          } else {
+            panTranslateY.value = move;
+          }
         }
       }
 
@@ -232,10 +250,13 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
         return;
       }
 
-      console.log(
-        scrollerOffsetY.value >=
-          contentY.value - containerY.value - SystemOffset
-      );
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions, @typescript-eslint/no-unnecessary-condition
+      LogFlag &&
+        // eslint-disable-next-line no-console
+        console.log(
+          scrollerOffsetY.value >=
+            contentY.value - containerY.value - SystemOffset
+        );
 
       if (scrollerOffsetY.value <= SystemOffset) {
         if (pulldownState.value !== PullingRefreshStatus.IDLE) {
@@ -263,8 +284,6 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
         scrollerOffsetY.value >=
         contentY.value - containerY.value - SystemOffset
       ) {
-        console.log('pullupState', pullupState.value);
-
         if (pullupState.value !== PullingRefreshStatus.IDLE) {
           pullupState.value =
             -panTranslateY.value >= pullupHeight * pullingFactor
