@@ -142,6 +142,8 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
       // pull down
       if (event.translationY > 0) {
         if (pullupState.value !== PullingRefreshStatus.IDLE) {
+          // FIXME: The delay released here will trigger the freezing of the bottom scroll,
+          // which is more obvious on Android than on iOS.
           lockIDLE.value = 1;
           pullupState.value = PullingRefreshStatus.IDLE;
         }
@@ -207,15 +209,13 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
             pullupState.value = newStatus;
           }
 
-          console.log('panGesture', recordValue.value);
-
           const move = event.translationY - recordValue.value;
 
-          if (move > 0) {
-            pullupState.value = PullingRefreshStatus.IDLE;
-          } else {
-            panTranslateY.value = move;
-          }
+          // if (move > 0) {
+          //   pullupState.value = PullingRefreshStatus.IDLE;
+          // } else {
+          panTranslateY.value = move;
+          // }
         }
       }
 
@@ -353,6 +353,13 @@ const MrRefreshWrapper: React.FC<PropsWithChildren<MrRefreshWrapperProps>> = ({
        *           However, it works fine on the real device.
        *           Maybe the simulator cant tracking gestures by mouse normally.
        *  */
+      overflowY:
+        /* for web */
+        pullupState.value !== PullingRefreshStatus.IDLE ||
+        pulldownState.value !== PullingRefreshStatus.IDLE ||
+        lockIDLE.value
+          ? 'hidden'
+          : 'auto',
       pointerEvents:
         pullupState.value !== PullingRefreshStatus.IDLE ||
         pulldownState.value !== PullingRefreshStatus.IDLE ||
