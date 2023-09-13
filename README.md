@@ -20,11 +20,11 @@
 react-native pull refresh on iOS, Android and Web
 
 ## 💪🏻 Support
-| Platform |             |
-| -------- | ----------- |
-| iOS      | ✅           |
-| Android  | ✅ |
-| Web      | Soon...     |
+| Platform |             |   solved    |
+| -------- | ----------- | ----------- |
+| iOS      | ✅          |  🔥 Perfect      |
+| Android  | ✅          |  😂 Bottom response is bad  |
+| Web      | ✅          |  😭 Pulling and scrolling cant switch smoothly |
 
 | Library |             |
 | -------- | ----------- |
